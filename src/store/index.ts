@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
+//import slices
+import balanceSlice from './slices/balanceSlice';
+import transactionSlice from './slices/transactionSlice';
 
 export const store = configureStore({
   reducer: {
-    // We'll add slices here as we create them
+    balance: balanceSlice,
+    transactions: transactionSlice,
   },
 });
 

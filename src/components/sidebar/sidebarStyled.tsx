@@ -22,19 +22,21 @@ export const NavMenu = styled.ul`
 `;
 
 export const NavItem = styled.li<{ isActive: boolean }>`
-    padding: ${props => props.theme.spacing.lg} ${props => props.theme.spacing.lg};
-    cursor: pointer;
-    font-size: ${props => props.theme.fontSizes.lg};
-    font-weight: ${props => props.isActive ? 600 : 500};
-    transition: all ${props => props.theme.transitions.fast};
-    width: 100%; /* Full width */
-    color: ${props => props.theme.colors.primary}; /* Always purple */
+  padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.md};
+  cursor: pointer;
+  font-size: ${props => props.theme.fontSizes.lg};
+  font-weight: ${props => props.isActive ? 700 : 400};
+  transition: all ${props => props.theme.transitions.fast};
+  width: 100%; /* Full width */
+  color: ${props => props.theme.colors.primary}; /* Always purple */
     
-    background-color: ${props => props.isActive 
-        ? '#f8fafc' 
-        : 'transparent'};
+  background-color: ${props => props.isActive 
+    ? '#f8fafc' 
+    : 'transparent'};
 
-    &:hover {
-        background-color: #f8fafc;
-    }
+  &:hover {
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: ${props => props.theme.shadows.md};
+  }
 `;

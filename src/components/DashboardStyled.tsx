@@ -15,46 +15,62 @@ export const MainContent = styled.div`
   
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: ${props => props.theme.spacing.xl};
-  
-  /* Grid layout:
-     [Financial Health] [Smart Insights]
-     [Upcoming Events] [Recent Activity]
-  */
+  grid-auto-rows: min-content;
+  gap: ${props => props.theme.spacing.lg};
+  align-items: start;
   
   /* Financial Health - top left */
   > div:nth-child(1) {
     grid-column: 1;
-    grid-row: 1;
   }
   
   /* Smart Insights - top right */
   > div:nth-child(2) {
     grid-column: 2;
-    grid-row: 1;
   }
   
   /* Upcoming Events - bottom left */
   > div:nth-child(3) {
     grid-column: 1;
-    grid-row: 2;
   }
   
   /* Recent Activity - bottom right */
   > div:nth-child(4) {
     grid-column: 2;
-    grid-row: 2;
   }
   
-  @media (max-width: 1024px) {
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 1fr; /* Simple 2-column on medium screens */
+    
+    > div:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    > div:nth-child(2) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    > div:nth-child(3) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    
+    > div:nth-child(4) {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+  
+  @media (max-width: 768px) {
     margin-left: 0;
     margin-top: 60px;
-    padding: ${props => props.theme.spacing.lg};
+    padding: ${props => props.theme.spacing.md};
     grid-template-columns: 1fr;
-    gap: ${props => props.theme.spacing.lg};
+    gap: ${props => props.theme.spacing.md};
     
-    /* Tablet/Mobile layout: All components stack vertically */
+    /* Mobile layout: All components stack vertically in optimal order */
     > div:nth-child(1),
     > div:nth-child(2),
     > div:nth-child(3),
@@ -62,10 +78,5 @@ export const MainContent = styled.div`
       grid-column: 1;
       grid-row: auto;
     }
-  }
-  
-  @media (max-width: 768px) {
-    padding: ${props => props.theme.spacing.md};
-    gap: ${props => props.theme.spacing.md};
   }
 `;

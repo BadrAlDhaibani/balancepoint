@@ -1,22 +1,19 @@
 import styled from 'styled-components';
 
 export const Card = styled.div`
-    background-color: ${props => props.theme.colors.text.white};
-    border-radius: ${props => props.theme.borderRadius.lg};
+    background-color: ${props => props.theme.colors.background.card};
     padding: ${props => props.theme.spacing.lg};
-    box-shadow: ${props => props.theme.shadows.md};
 `;
 
 export const SectionTitle = styled.h2`
-    font-size: ${props => props.theme.fontSizes.lg};
-    font-weight: 600;
-    margin-bottom: ${props => props.theme.spacing.md};
+    font-size: ${props => props.theme.fontSizes.xl};
+    font-weight: 400;
+    margin-bottom: ${props => props.theme.spacing.sm};
     color: ${props => props.theme.colors.text.primary};
 `;
 
 export const InsightCard = styled.div<{ type: 'good' | 'warning' | 'info' }>`
     padding: ${props => props.theme.spacing.md};
-    border-radius: ${props => props.theme.borderRadius.md};
     background-color: ${props => {
         switch (props.type) {
             case 'good':
@@ -24,7 +21,7 @@ export const InsightCard = styled.div<{ type: 'good' | 'warning' | 'info' }>`
             case 'warning':
                 return props.theme.colors.accent.yellow;
             case 'info':
-                return props.theme.colors.background.card;
+                return props.theme.colors.background.gray;
         }
     }};
     margin-bottom: ${props => props.theme.spacing.sm};
@@ -42,14 +39,12 @@ export const InsightCard = styled.div<{ type: 'good' | 'warning' | 'info' }>`
 `;
 
 export const InsightMessage = styled.div`
-    font-weight: 600;
+    font-size: ${props => props.theme.fontSizes.base};
+    font-weight: 400;
     color: ${props => props.theme.colors.text.primary};
-    margin-bottom: ${props => props.theme.spacing.xs};
-    line-height: 1.4;
 `
 
 export const InsightDetails = styled.div`
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.base};
     color: ${props => props.theme.colors.text.secondary};
-    line-height: 1.4;
 `;

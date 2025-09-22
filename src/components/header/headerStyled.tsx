@@ -4,7 +4,7 @@ export const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${props => props.theme.spacing.xl};
+  padding: ${props => props.theme.spacing.lg};
   background-color: ${props => props.theme.colors.background.main};
   border-bottom: 3px solid #f8fafc;
   position: fixed;
@@ -17,7 +17,7 @@ export const HeaderContainer = styled.header`
 
 export const Logo = styled.h1`
   font-size: ${props => props.theme.fontSizes['3xl']};
-  font-weight: 600;
+  font-weight: 700;
   color: ${props => props.theme.colors.primary};
   margin: 0;
 `;

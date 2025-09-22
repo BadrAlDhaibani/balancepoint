@@ -7,10 +7,13 @@ import {
     BalanceAmount,
     BalanceLabel,
     HealthStatus,
+    HealthStatusLabel,
+    HealthStatusValue,
     RatioSection,
     RatioLabel,
     RatioProgress,
     RatioFill,
+    RatioGap,
     RatioText,
     NextIncomeSection,
     NextIncomeLabel,
@@ -38,18 +41,19 @@ const FinancialHealth: React.FC<FinancialHealthProps> = ({
             </BalanceLabel>
 
             <HealthStatus status={balance.healthStatus}>
-                Health Status: {balance.healthStatus.toUpperCase()}
+                <HealthStatusLabel>Health Status:</HealthStatusLabel>
+                <HealthStatusValue status={balance.healthStatus}>
+                    {balance.healthStatus}
+                </HealthStatusValue>
             </HealthStatus>
 
             <RatioSection>
                 <RatioLabel>Quick Ratio</RatioLabel>
                 <RatioProgress>
                     <RatioFill percentage={balance.incomeVsExpenseRatio} />
+                    <RatioGap percentage={balance.incomeVsExpenseRatio} />
                 </RatioProgress>
                 <RatioText>
-                    {balance.incomeVsExpenseRatio}% | 25%
-                </RatioText>
-                <RatioText secondary>
                     Income vs Expenses
                 </RatioText>
             </RatioSection>

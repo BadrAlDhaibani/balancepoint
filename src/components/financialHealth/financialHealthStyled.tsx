@@ -1,29 +1,27 @@
 import styled from 'styled-components';
 
 export const Card = styled.div`
-    background-color: ${props => props.theme.colors.text.white};
-    border-radius: ${props => props.theme.borderRadius.lg};
+    background-color: ${props => props.theme.colors.background.card};
     padding: ${props => props.theme.spacing.lg};
-    box-shadow: ${props => props.theme.shadows.md};
 `;
 
 export const SectionTitle = styled.h2`
-    font-size: ${props => props.theme.fontSizes.lg};
-    font-weight: 600;
-    margin-bottom: ${props => props.theme.spacing.md};
+    font-size: ${props => props.theme.fontSizes.xl};
+    font-weight: 400;
+    margin-bottom: ${props => props.theme.spacing.sm};
     color: ${props => props.theme.colors.text.primary};
 `;
 
 export const BalanceAmount = styled.div`
-    font-size: ${props => props.theme.fontSizes['2xl']};
-    font-weight: 700;
+    font-size: ${props => props.theme.fontSizes['4xl']};
+    font-weight: 600;
     color: ${props => props.theme.colors.text.primary};
     margin-bottom: ${props => props.theme.spacing.xs};
     line-height: 1.2;
 `;
 
 export const BalanceLabel = styled.div`
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.base};
     color: ${props => props.theme.colors.text.secondary};
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -35,50 +33,48 @@ export const HealthStatus = styled.div<{ status: 'good' | 'warning' | 'critical'
     display: flex;
     align-items: center;
     gap: ${props => props.theme.spacing.xs};
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.lg};
     font-weight: 500;
-    color: ${props => props.theme.colors.status[props.status]};
     margin-bottom: ${props => props.theme.spacing.lg};
+    text-transform: uppercase;
 
     &::before {
-        content: '${props => {
-            switch (props.status) {
-                case 'good':
-                    return '✔';
-                case 'warning':
-                    return '⚠';
-                case 'critical':
-                    return '✖';
-            }
-        }}';
+        content: '';
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 18px;
-        height: 18px;
-        border-radius: ${props => props.theme.borderRadius.full};
-        background-color: ${props => props.theme.colors.status[props.status]};
-        color: ${props => props.theme.colors.text.white};
-        font-size: 11px;
-        font-weight: bold;
+        width: 30px;
+        height: 30px;
+        background-image: ${props => props.theme.icons.status[props.status]};
+        background-size: 30px 30px;
+        background-repeat: no-repeat;
+        background-position: center;
     }
 `;
+
+export const HealthStatusLabel = styled.span`
+    color: ${props => props.theme.colors.text.secondary};
+`
+
+export const HealthStatusValue = styled.span<{ status: 'good' | 'warning' | 'critical' }>`
+    color: ${props => props.theme.colors.status[props.status]};
+`
 
 export const RatioSection = styled.div`
     margin-bottom: ${props => props.theme.spacing.lg};
 `;
 
 export const RatioLabel = styled.div`
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.lg};
     font-weight: 500;
+    text-transform: uppercase;
     color: ${props => props.theme.colors.text.secondary};
     margin-bottom: ${props => props.theme.spacing.xs};
 `;
 
 export const RatioProgress = styled.div`
-    height: 10px;
+    height: 20px;
     background-color: ${props => props.theme.colors.background.gray};
-    border-radius: ${props => props.theme.borderRadius.full};
     overflow: hidden;
     margin-bottom: ${props => props.theme.spacing.xs};
 `;
@@ -86,36 +82,53 @@ export const RatioProgress = styled.div`
 export const RatioFill = styled.div<{ percentage: number }>`
     height: 100%;
     width: ${props => props.percentage}%;
-    background: linear-gradient(90deg,
-        ${props => props.theme.colors.accent.green} 0%,
-        ${props => props.theme.colors.accent.yellow} 50%,
-        ${props => props.theme.colors.accent.red} 100%);
-    transition: width ${props => props.theme.transitions.fast};
-    );
-    border-radius: ${props => props.theme.borderRadius.full};
-    transitions: width ${props => props.theme.transitions.slow};
+    background-color: ${props => {
+        const percentage = props.percentage;
+        if (percentage <= 100/3) {
+            return props.theme.colors.status.critical; // Red for 0%-1/3
+        } else if (percentage <= 200/3) {
+            return props.theme.colors.status.warning; // Yellow for 1/3-2/3
+        } else {
+            return props.theme.colors.status.good; // Green for 2/3-100%
+        }
+    }};
+    transition: width ${props => props.theme.transitions.slow}, background-color ${props => props.theme.transitions.slow};
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    &::after {
-        content: '';
-        position: absolute;
-        right: -2px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 4px;
-        background-color: ${props => props.theme.colors.text.white};
-        border-radius: ${props => props.theme.borderRadius.full};
+    &::before {
+        content: '${props => Math.round(props.percentage)}%';
+        font-size: ${props => props.theme.fontSizes.xs};
+        font-weight: 600;
+        color: ${props => props.theme.colors.text.white};
+        white-space: nowrap;
     }
 `;
 
-export const RatioText = styled.div<{ secondary?: boolean }>`
-    font-size: ${props => props.theme.fontSizes.sm};
-    color: ${props => props.secondary 
-        ? props.theme.colors.text.secondary 
-        : props.theme.colors.text.primary};
-    font-weight: ${props => props.secondary ? 400 : 500};
-    margin-top: ${props => props.secondary ? '2px' : '0'};
+export const RatioGap = styled.div<{ percentage: number }>`
+    height: 100%;
+    width: ${props => 100 - props.percentage}%;
+    background-color: ${props => props.theme.colors.background.gray};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &::before {
+        content: '${props => Math.round(100 - props.percentage)}%';
+        font-size: ${props => props.theme.fontSizes.xs};
+        font-weight: 600;
+        color: ${props => props.theme.colors.text.secondary};
+        white-space: nowrap;
+    }
+`;
+
+export const RatioText = styled.div`
+    font-size: ${props => props.theme.fontSizes.lg};
+    color: ${props => props.theme.colors.text.secondary};
+    font-weight: 400;
+    margin-top: -2px;
 `;
 
 export const NextIncomeSection = styled.div`
@@ -124,22 +137,20 @@ export const NextIncomeSection = styled.div`
 `;
 
 export const NextIncomeLabel = styled.div`
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.lg};
     color: ${props => props.theme.colors.text.secondary};
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: ${props => props.theme.spacing.xs};
 `;
 
 export const NextIncomeDays = styled.div`
-    font-size: ${props => props.theme.fontSizes.xl};
+    font-size: ${props => props.theme.fontSizes['3xl']};
     font-weight: 700;
     color: ${props => props.theme.colors.text.primary};
-    margin-bottom: ${props => props.theme.spacing.xs};
 `;
 
 export const NextIncomeDetails = styled.div`
-    font-size: ${props => props.theme.fontSizes.sm};
+    font-size: ${props => props.theme.fontSizes.lg};
     color: ${props => props.theme.colors.text.secondary};
     line-height: 1.4;
 `;

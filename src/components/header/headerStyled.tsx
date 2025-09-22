@@ -31,7 +31,7 @@ export const AddButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${props => props.theme.fontSizes.xl};
+  font-size: ${props => props.theme.fontSizes['3xl']};
   color: ${props => props.theme.colors.primary};
   cursor: pointer;
   transition: all ${props => props.theme.transitions.fast};
@@ -43,6 +43,11 @@ export const AddButton = styled.button`
   }
   
   &:active {
-    transform: scale(0.95);
+    transform: scale(1);
+  }
+  
+  svg {
+    width: 24px; /* Control the size directly */
+    height: 24px;
   }
 `;

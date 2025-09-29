@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addIncome, addRecurringIncome } from '../../../store/slices/incomeSlice';
+import { addExpense, addRecurringExpense } from '../../../store/slices/expenseSlice';
 import {
     QuickAddSection,
     QuickAddTitle,
@@ -11,9 +11,9 @@ import {
     Select,
     ActionButtons,
     Button,
-}from './quickAddIncomeStyled';
+}from './quickAddExpenseStyled';
 
-export const QuickAddIncome: React.FC = () => {
+export const QuickAddExpense: React.FC = () => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         description: '',
@@ -51,10 +51,10 @@ export const QuickAddIncome: React.FC = () => {
         return true;
     };
 
-    const handleAddIncome = () => {
+    const handleAddExpense = () => {
         if (!validateForm()) return;
 
-        const incomeData = {
+        const expenseData = {
             id: Date.now().toString(),
             description: formData.description.trim(),
             amount: parseFloat(formData.amount),
@@ -65,17 +65,17 @@ export const QuickAddIncome: React.FC = () => {
 
         if (formData.type === 'recurring') {
             const recurringData = {
-                id: incomeData.id,
-                description: incomeData.description,
-                amount: incomeData.amount,
+                id: expenseData.id,
+                description: expenseData.description,
+                amount: expenseData.amount,
                 frequency: formData.frequency,
                 isActive: true,
-                startDate: incomeData.date,
+                startDate: expenseData.date,
                 nextPaymentDate: calculateNextPaymentDate(formData.frequency),
             };
-            dispatch(addRecurringIncome(recurringData));
+            dispatch(addRecurringExpense(recurringData));
         } else {
-            dispatch(addIncome(incomeData));
+            dispatch(addExpense(expenseData));
         }
 
         resetForm();
@@ -105,14 +105,14 @@ export const QuickAddIncome: React.FC = () => {
 
     return (
         <QuickAddSection>
-            <QuickAddTitle>Quick Add Income</QuickAddTitle>
+            <QuickAddTitle>Quick Add Expense</QuickAddTitle>
             <FormRow>
                 <FormGroup>
                     <Label>Description</Label>
                     <Input
                         type="text"
                         name="description"
-                        placeholder="Salary, Freelance work, etc."
+                        placeholder="Rent, groceries, utilities, etc."
                         value={formData.description}
                         onChange={handleInputChange}
                     />
@@ -157,11 +157,10 @@ export const QuickAddIncome: React.FC = () => {
                 )}
             </FormRow>
             <ActionButtons>
-                <Button onClick={handleAddIncome}>
-                    {formData.type === 'recurring' ? 'Add Recurring Income' : 'Add Income'}
+                <Button onClick={handleAddExpense}>
+                    {formData.type === 'recurring' ? 'Add Recurring Expense' : 'Add Expense'}
                 </Button>
             </ActionButtons>
         </QuickAddSection>
     );
 };
-

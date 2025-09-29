@@ -9,6 +9,7 @@ import { Header } from './components/common/header';
 import { Sidebar } from './components/common/sidebar';
 import Dashboard from './components/dashboard/Dashboard';
 import { Income } from './components/income';
+import { Expense } from './components/expenses';
 
 const App: React.FC = () => {
   return (
@@ -22,7 +23,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/income" element={<Income />} />
-            <Route path="/expenses" element={<div>Expenses Page - Coming Soon</div>} />
+            <Route path="/expenses" element={<Expense />} />
             <Route path="/transactions" element={<div>Transactions Page - Coming Soon</div>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

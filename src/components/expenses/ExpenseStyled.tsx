@@ -31,7 +31,7 @@ export const FullWidthCard = styled.div`
     padding: ${props => props.theme.spacing.lg};
     height: fit-content;
 
-    @media (max-wdith: 768px){
+    @media (max-width: 768px){
         padding: ${props => props.theme.spacing.md};
     }
 `;

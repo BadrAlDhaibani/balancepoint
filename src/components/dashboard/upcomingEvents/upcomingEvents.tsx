@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { UpcomingEvent } from '../../store/slices/transactionSlice';
+import { RootState } from '../../../store';
+import { UpcomingEvent } from '../../../store/slices/transactionSlice';
 import {
     Card,
     SectionTitle,

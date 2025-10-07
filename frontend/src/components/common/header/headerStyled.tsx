@@ -22,6 +22,10 @@ export const Logo = styled.h1`
   margin: 0;
 `;
 
+export const AddButtonContainer = styled.div`
+  position: relative;
+`;
+
 export const AddButton = styled.button`
   background-color: ${props => props.theme.colors.secondary};
   border: none;
@@ -47,7 +51,41 @@ export const AddButton = styled.button`
   }
   
   svg {
-    width: 24px; /* Control the size directly */
+    width: 24px;
     height: 24px;
+  }
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  background-color: ${props => props.theme.colors.primary};
+  border: 1px solid ${props => props.theme.colors.secondary};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  box-shadow: ${props => props.theme.shadows.lg};
+  overflow: hidden;
+  min-width: 160px;
+  z-index: 100;
+`;
+
+export const DropdownItem = styled.button`
+  width: 100%;
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: ${props => props.theme.fontSizes.base};
+  color: ${props => props.theme.colors.text.white};
+  cursor: pointer;
+  transition: all ${props => props.theme.transitions.fast};
+
+  &:hover {
+    background-color: ${props => props.theme.colors.background.card};
+    color: ${props => props.theme.colors.primary};
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${props => props.theme.colors.text.white}};
   }
 `;

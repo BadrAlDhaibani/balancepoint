@@ -13,18 +13,8 @@ import {
     EmptyState,
 } from './recentExpenseActivityStyled';
 
-interface CombinedExpenseActivity {
-    id: string;
-    description: string;
-    amount: number;
-    date: string;
-    type: 'manual' | 'recurring';
-    sortDate: Date;
-}
-
 export const RecentExpenseActivity: React.FC = () => {
-    const expenseTransactions = useSelector((state: RootState) => state.expense.transactions);
-    const recurringExpenses = useSelector((state: RootState) => state.expense.recurringExpenses);
+    const expenseItems = useSelector((state: RootState) => state.expense.items);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -39,7 +29,6 @@ export const RecentExpenseActivity: React.FC = () => {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        //reset time for accurate comparison
         today.setHours(0, 0, 0, 0);
         yesterday.setHours(0, 0, 0, 0);
         const compareDate = new Date(date);
@@ -59,48 +48,27 @@ export const RecentExpenseActivity: React.FC = () => {
         }
     };
 
-    //combine and sort all expense activity
-    const allExpenseActivity: CombinedExpenseActivity[] = [
-        //add all manual transactions
-        ...expenseTransactions.map(transaction => ({
-            id: transaction.id,
-            description: transaction.description,
-            amount: transaction.amount,
-            date: transaction.date,
-            type: 'manual' as const,
-            sortDate: new Date(transaction.date),
-        })),
-        //add sample recurring expense entries (from nextPaymentDate)
-        ...recurringExpenses
-            .filter(recurring => recurring.isActive && recurring.nextPaymentDate)
-            .map(recurring => ({
-                id: `recurring-${recurring.id}`,
-                description: recurring.description,
-                amount: recurring.amount,
-                date: recurring.nextPaymentDate || new Date().toISOString().split('T')[0],
-                type: 'recurring' as const,
-                sortDate: new Date(recurring.nextPaymentDate || new Date()),
-            }))
-    ]
-    .sort((a, b) => b.sortDate.getTime() - a.sortDate.getTime())
-    .slice(0, 10); // Show last 10 entries
+    // Sort by date and show last 10
+    const sortedExpenses = [...expenseItems]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 10);
 
     return (
         <>
             <CardTitle>Recent Expense Activity</CardTitle>
-            {allExpenseActivity.length > 0 ? (
-                allExpenseActivity.map((activity) => (
-                    <ExpenseItem key={activity.id}>
+            {sortedExpenses.length > 0 ? (
+                sortedExpenses.map((item) => (
+                    <ExpenseItem key={item.id}>
                         <ExpenseDetails>
-                            <ExpenseTitle>{activity.description}</ExpenseTitle>
+                            <ExpenseTitle>{item.description}</ExpenseTitle>
                             <ExpenseMeta>
-                                {formatDate(activity.date)} • {activity.type === 'recurring' ? 'Automatic' : 'Manual Entry'}
+                                {formatDate(item.date)} • {item.is_recurring ? 'Automatic' : 'Manual Entry'}
                             </ExpenseMeta>
                         </ExpenseDetails>
                         <ExpenseAmountContainer>
-                            <ExpenseAmount>-{formatCurrency(activity.amount)}</ExpenseAmount>
-                            <Badge variant={activity.type === 'recurring' ? 'recurring' : 'manual'}>
-                                {activity.type === 'recurring' ? 'AUTO' : 'MANUAL'}
+                            <ExpenseAmount>-{formatCurrency(item.amount)}</ExpenseAmount>
+                            <Badge variant={item.is_recurring ? 'recurring' : 'manual'}>
+                                {item.is_recurring ? 'AUTO' : 'MANUAL'}
                             </Badge>
                         </ExpenseAmountContainer>
                     </ExpenseItem>

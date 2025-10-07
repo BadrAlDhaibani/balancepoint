@@ -14,7 +14,10 @@ import {
 } from './recurringIncomeStyled';
 
 export const RecurringIncome: React.FC = () => {
-    const recurringIncome = useSelector((state: RootState) => state.income.recurringIncome);
+    const incomeItems = useSelector((state: RootState) => state.income.items);
+    
+    //filter for recurring income only
+    const recurringIncomeItems = incomeItems.filter(item => item.is_recurring);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -23,7 +26,7 @@ export const RecurringIncome: React.FC = () => {
         }).format(amount);
     };
 
-    const formatFrequency = (frequency: string) => {
+    const formatFrequency = (frequency?: string) => {
         switch (frequency) {
             case 'weekly':
                 return 'Every week';
@@ -34,57 +37,50 @@ export const RecurringIncome: React.FC = () => {
             case 'quarterly':
                 return 'Every quarter';
             default:
-                return frequency;
+                return 'Recurring';
         }
     };
 
-    const getNextPaymentText = (frequency: string, nextDate?: string) => {
-        if (nextDate) {
-            const date = new Date(nextDate);
-            return `Next: ${date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            })}`;
-        }
-        
-        //calculate next payment based on frequency
+    const calculateNextPaymentDate = (startDate: string, frequency?: string) => {
         const today = new Date();
-        let nextPayment = new Date(today);
-        
-        switch (frequency) {
-            case 'weekly':
-                nextPayment.setDate(today.getDate() + 7);
-                break;
-            case 'bi-weekly':
-                nextPayment.setDate(today.getDate() + 14);
-                break;
-            case 'monthly':
-                nextPayment.setMonth(today.getMonth() + 1);
-                break;
-            case 'quarterly':
-                nextPayment.setMonth(today.getMonth() + 3);
-                break;
+        let nextDate = new Date(startDate);
+
+        if (!frequency) return 'N/A';
+
+        //keep adding intervals until we're in the future
+        while (nextDate < today) {
+            switch (frequency) {
+                case 'weekly':
+                    nextDate.setDate(nextDate.getDate() + 7);
+                    break;
+                case 'bi-weekly':
+                    nextDate.setDate(nextDate.getDate() + 14);
+                    break;
+                case 'monthly':
+                    nextDate.setMonth(nextDate.getMonth() + 1);
+                    break;
+                case 'quarterly':
+                    nextDate.setMonth(nextDate.getMonth() + 3);
+                    break;
+            }
         }
-        
-        return `Next: ${nextPayment.toLocaleDateString('en-US', { 
+
+        return nextDate.toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric' 
-        })}`;
+        });
     };
-
-    //filter active recurring income
-    const activeRecurringIncome = recurringIncome.filter(income => income.isActive);
 
     return (
         <Card>
             <CardTitle>Recurring Income</CardTitle>
-            {activeRecurringIncome.length > 0 ? (
-                activeRecurringIncome.map((income) => (
+            {recurringIncomeItems.length > 0 ? (
+                recurringIncomeItems.map((income) => (
                     <IncomeItem key={income.id}>
                         <IncomeDetails>
                             <IncomeTitle>{income.description}</IncomeTitle>
                             <IncomeMeta>
-                                {formatFrequency(income.frequency)} • {getNextPaymentText(income.frequency, income.nextPaymentDate)}
+                                {formatFrequency(income.frequency)} • Next: {calculateNextPaymentDate(income.date, income.frequency)}
                             </IncomeMeta>
                         </IncomeDetails>
                         <IncomeAmountContainer>

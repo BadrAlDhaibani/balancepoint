@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Card = styled.div`
     background-color: ${props => props.theme.colors.background.card};
     padding: ${props => props.theme.spacing.lg};
-    min-height: 300px;
+    min-height: auto;
     display: flex;
     flex-direction: column;
 

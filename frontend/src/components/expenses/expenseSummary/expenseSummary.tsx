@@ -11,33 +11,35 @@ import {
 } from './expenseSummaryStyled';
 
 export const ExpenseSummary: React.FC = () => {
-    const expenseData = useSelector((state: RootState) => state.expense);
+    const expenseItems = useSelector((state: RootState) => state.expense.items);
 
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     
-    const thisMonthExpense = expenseData.transactions
-        .filter(transaction => {
-            const transactionDate = new Date(transaction.date);
-            return transactionDate.getMonth() === currentMonth && 
-                   transactionDate.getFullYear() === currentYear;
+    const thisMonthExpense = expenseItems
+        .filter(item => !item.is_recurring)
+        .filter(item => {
+            const itemDate = new Date(item.date);
+            return itemDate.getMonth() === currentMonth && 
+                   itemDate.getFullYear() === currentYear;
         })
-        .reduce((sum, transaction) => sum + transaction.amount, 0);
+        .reduce((sum, item) => sum + item.amount, 0);
 
     const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     
-    const lastMonthExpense = expenseData.transactions
-        .filter(transaction => {
-            const transactionDate = new Date(transaction.date);
-            return transactionDate.getMonth() === lastMonth && 
-                   transactionDate.getFullYear() === lastMonthYear;
+    const lastMonthExpense = expenseItems
+        .filter(item => !item.is_recurring)
+        .filter(item => {
+            const itemDate = new Date(item.date);
+            return itemDate.getMonth() === lastMonth && 
+                   itemDate.getFullYear() === lastMonthYear;
         })
-        .reduce((sum, transaction) => sum + transaction.amount, 0);
+        .reduce((sum, item) => sum + item.amount, 0);
 
-    const monthlyRecurringExpense = expenseData.recurringExpenses
-        .filter(expense => expense.frequency === 'monthly' && expense.isActive)
-        .reduce((sum, expense) => sum + expense.amount, 0);
+    const monthlyRecurringExpense = expenseItems
+        .filter(item => item.is_recurring && item.frequency === 'monthly')
+        .reduce((sum, item) => sum + item.amount, 0);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {

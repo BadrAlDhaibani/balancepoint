@@ -13,18 +13,8 @@ import {
     EmptyState,
 } from './recentIncomeActivityStyled';
 
-interface CombinedIncomeActivity {
-    id: string;
-    description: string;
-    amount: number;
-    date: string;
-    type: 'manual' | 'recurring';
-    sortDate: Date;
-}
-
 export const RecentIncomeActivity: React.FC = () => {
-    const incomeTransactions = useSelector((state: RootState) => state.income.transactions);
-    const recurringIncome = useSelector((state: RootState) => state.income.recurringIncome);
+    const incomeItems = useSelector((state: RootState) => state.income.items);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -39,7 +29,6 @@ export const RecentIncomeActivity: React.FC = () => {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
 
-        //reset time for accurate comparison
         today.setHours(0, 0, 0, 0);
         yesterday.setHours(0, 0, 0, 0);
         const compareDate = new Date(date);
@@ -59,48 +48,27 @@ export const RecentIncomeActivity: React.FC = () => {
         }
     };
 
-    //combine and sort all income activity
-    const allIncomeActivity: CombinedIncomeActivity[] = [
-        //add all manual transactions
-        ...incomeTransactions.map(transaction => ({
-            id: transaction.id,
-            description: transaction.description,
-            amount: transaction.amount,
-            date: transaction.date,
-            type: 'manual' as const,
-            sortDate: new Date(transaction.date),
-        })),
-        //add sample recurring income entries (from nextPaymentDate)
-        ...recurringIncome
-            .filter(recurring => recurring.isActive && recurring.nextPaymentDate)
-            .map(recurring => ({
-                id: `recurring-${recurring.id}`,
-                description: recurring.description,
-                amount: recurring.amount,
-                date: recurring.nextPaymentDate || new Date().toISOString().split('T')[0],
-                type: 'recurring' as const,
-                sortDate: new Date(recurring.nextPaymentDate || new Date()),
-            }))
-    ]
-    .sort((a, b) => b.sortDate.getTime() - a.sortDate.getTime())
-    .slice(0, 10); // Show last 10 entries
+    // Sort by date and show last 10
+    const sortedIncome = [...incomeItems]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 10);
 
     return (
         <>
             <CardTitle>Recent Income Activity</CardTitle>
-            {allIncomeActivity.length > 0 ? (
-                allIncomeActivity.map((activity) => (
-                    <IncomeItem key={activity.id}>
+            {sortedIncome.length > 0 ? (
+                sortedIncome.map((item) => (
+                    <IncomeItem key={item.id}>
                         <IncomeDetails>
-                            <IncomeTitle>{activity.description}</IncomeTitle>
+                            <IncomeTitle>{item.description}</IncomeTitle>
                             <IncomeMeta>
-                                {formatDate(activity.date)} • {activity.type === 'recurring' ? 'Automatic' : 'Manual Entry'}
+                                {formatDate(item.date)} • {item.is_recurring ? 'Automatic' : 'Manual Entry'}
                             </IncomeMeta>
                         </IncomeDetails>
                         <IncomeAmountContainer>
-                            <IncomeAmount>+{formatCurrency(activity.amount)}</IncomeAmount>
-                            <Badge variant={activity.type === 'recurring' ? 'recurring' : 'manual'}>
-                                {activity.type === 'recurring' ? 'AUTO' : 'MANUAL'}
+                            <IncomeAmount>+{formatCurrency(item.amount)}</IncomeAmount>
+                            <Badge variant={item.is_recurring ? 'recurring' : 'manual'}>
+                                {item.is_recurring ? 'AUTO' : 'MANUAL'}
                             </Badge>
                         </IncomeAmountContainer>
                     </IncomeItem>

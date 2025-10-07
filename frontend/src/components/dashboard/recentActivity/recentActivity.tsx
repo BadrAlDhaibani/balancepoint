@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import { Transaction } from '../../../store/slices/transactionSlice';
 import {
     Card,
     SectionTitle,
@@ -22,44 +21,100 @@ interface RecentActivityProps {
     onViewAll?: () => void;
 }
 
+interface CombinedTransaction {
+    id: string;
+    description: string;
+    amount: number;
+    date: string;
+    type: 'income' | 'expense';
+    is_recurring: boolean;
+}
+
 const RecentActivity: React.FC<RecentActivityProps> = ({
     maxTransactions = 5,
     title = "Recent Activity",
     showViewAll = false,
     onViewAll
 }) => {
-    const transactions = useSelector((state: RootState) => state.transactions.transactions);
+    const incomeItems = useSelector((state: RootState) => state.income.items);
+    const expenseItems = useSelector((state: RootState) => state.expense.items);
 
-    const displayedTransactions = transactions.slice(0, maxTransactions);
+    //combine income and expenses
+    const allTransactions: CombinedTransaction[] = [
+        ...incomeItems.map(item => ({
+            id: item.id,
+            description: item.description,
+            amount: item.amount,
+            date: item.date,
+            type: 'income' as const,
+            is_recurring: item.is_recurring
+        })),
+        ...expenseItems.map(item => ({
+            id: item.id,
+            description: item.description,
+            amount: item.amount,
+            date: item.date,
+            type: 'expense' as const,
+            is_recurring: item.is_recurring
+        }))
+    ];
+
+    //sort by date and get most recent
+    const sortedTransactions = allTransactions
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, maxTransactions);
 
     const formatAmount = (amount: number, type: 'income' | 'expense') => {
         const prefix = type === 'income' ? '+' : '-';
         return `${prefix}$${Math.abs(amount).toFixed(2)}`;
     };
 
-    const getTransactionTypeLabel = (isRecurring: boolean) => {
-        return isRecurring ? 'Auto' : 'Manual';
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        today.setHours(0, 0, 0, 0);
+        yesterday.setHours(0, 0, 0, 0);
+        const compareDate = new Date(date);
+        compareDate.setHours(0, 0, 0, 0);
+
+        if (compareDate.getTime() === today.getTime()) {
+            return 'Today';
+        } else if (compareDate.getTime() === yesterday.getTime()) {
+            return 'Yesterday';
+        } else {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+    };
+
+    const getTransactionTypeLabel = (is_recurring: boolean) => {
+        return is_recurring ? 'Auto' : 'Manual';
     };
 
    return (
     <Card>
         <SectionTitle>
             {title}
-            {showViewAll && displayedTransactions.length > 0 && (
+            {showViewAll && sortedTransactions.length > 0 && (
                 <button onClick={onViewAll}>View All</button>
             )}
         </SectionTitle>
     
         <ActivityList>
-            {displayedTransactions.length > 0 ? (
-                displayedTransactions.map((transaction: Transaction) => (
+            {sortedTransactions.length > 0 ? (
+                sortedTransactions.map((transaction) => (
                     <ActivityItem key={transaction.id}>
                         <ActivityDetails>
                             <ActivityTitle>{transaction.description}</ActivityTitle>
                             <ActivityMeta>
-                                {transaction.date} • {getTransactionTypeLabel(transaction.isRecurring)}
-                                <ActivityType type={transaction.type} isRecurring={transaction.isRecurring}>
-                                    {getTransactionTypeLabel(transaction.isRecurring)}
+                                {formatDate(transaction.date)} • {getTransactionTypeLabel(transaction.is_recurring)}
+                                <ActivityType type={transaction.type} isRecurring={transaction.is_recurring}>
+                                    {getTransactionTypeLabel(transaction.is_recurring)}
                                 </ActivityType>
                             </ActivityMeta>
                         </ActivityDetails>

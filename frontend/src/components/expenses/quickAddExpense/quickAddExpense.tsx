@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addExpense, addRecurringExpense } from '../../../store/slices/expenseSlice';
+import { addExpense } from '../../../store/slices/expenseSlice';
 import {
     QuickAddSection,
     QuickAddTitle,
@@ -54,57 +54,21 @@ export const QuickAddExpense: React.FC = () => {
     const handleAddExpense = () => {
         if (!validateForm()) return;
 
-        const expenseData = {
+        const newExpense = {
             id: Date.now().toString(),
             description: formData.description.trim(),
             amount: parseFloat(formData.amount),
             date: new Date().toISOString().split('T')[0],
-            isRecurring: formData.type === 'recurring',
+            is_recurring: formData.type === 'recurring',
             frequency: formData.type === 'recurring' ? formData.frequency : undefined,
         };
 
-        if (formData.type === 'recurring') {
-            const recurringData = {
-                id: expenseData.id,
-                description: expenseData.description,
-                amount: expenseData.amount,
-                frequency: formData.frequency,
-                isActive: true,
-                startDate: expenseData.date,
-                nextPaymentDate: calculateNextPaymentDate(formData.frequency),
-            };
-            dispatch(addRecurringExpense(recurringData));
-        } else {
-            dispatch(addExpense(expenseData));
-        }
-
+        dispatch(addExpense(newExpense));
         resetForm();
     };
 
-    const calculateNextPaymentDate = (frequency: string): string => {
-        const today = new Date();
-        let nextDate = new Date(today);
-
-        switch (frequency) {
-            case 'weekly':
-                nextDate.setDate(today.getDate() + 7);
-                break;
-            case 'bi-weekly':
-                nextDate.setDate(today.getDate() + 14);
-                break;
-            case 'monthly':
-                nextDate.setMonth(today.getMonth() + 1);
-                break;
-            case 'quarterly':
-                nextDate.setMonth(today.getMonth() + 3);
-                break;
-        }
-
-        return nextDate.toISOString().split('T')[0];
-    };
-
     return (
-        <QuickAddSection>
+        <QuickAddSection id="quick-add">
             <QuickAddTitle>Quick Add Expense</QuickAddTitle>
             <FormRow>
                 <FormGroup>

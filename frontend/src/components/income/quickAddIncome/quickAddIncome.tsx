@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addIncome, addRecurringIncome } from '../../../store/slices/incomeSlice';
+import { addIncome } from '../../../store/slices/incomeSlice';
 import {
     QuickAddSection,
     QuickAddTitle,
@@ -54,57 +54,21 @@ export const QuickAddIncome: React.FC = () => {
     const handleAddIncome = () => {
         if (!validateForm()) return;
 
-        const incomeData = {
+        const newIncome = {
             id: Date.now().toString(),
             description: formData.description.trim(),
             amount: parseFloat(formData.amount),
             date: new Date().toISOString().split('T')[0],
-            isRecurring: formData.type === 'recurring',
+            is_recurring: formData.type === 'recurring',
             frequency: formData.type === 'recurring' ? formData.frequency : undefined,
         };
 
-        if (formData.type === 'recurring') {
-            const recurringData = {
-                id: incomeData.id,
-                description: incomeData.description,
-                amount: incomeData.amount,
-                frequency: formData.frequency,
-                isActive: true,
-                startDate: incomeData.date,
-                nextPaymentDate: calculateNextPaymentDate(formData.frequency),
-            };
-            dispatch(addRecurringIncome(recurringData));
-        } else {
-            dispatch(addIncome(incomeData));
-        }
-
+        dispatch(addIncome(newIncome));
         resetForm();
     };
 
-    const calculateNextPaymentDate = (frequency: string): string => {
-        const today = new Date();
-        let nextDate = new Date(today);
-
-        switch (frequency) {
-            case 'weekly':
-                nextDate.setDate(today.getDate() + 7);
-                break;
-            case 'bi-weekly':
-                nextDate.setDate(today.getDate() + 14);
-                break;
-            case 'monthly':
-                nextDate.setMonth(today.getMonth() + 1);
-                break;
-            case 'quarterly':
-                nextDate.setMonth(today.getMonth() + 3);
-                break;
-        }
-
-        return nextDate.toISOString().split('T')[0];
-    };
-
     return (
-        <QuickAddSection>
+        <QuickAddSection id="quick-add">
             <QuickAddTitle>Quick Add Income</QuickAddTitle>
             <FormRow>
                 <FormGroup>
@@ -164,4 +128,3 @@ export const QuickAddIncome: React.FC = () => {
         </QuickAddSection>
     );
 };
-

@@ -14,14 +14,13 @@ export const Sidebar: React.FC = () => {
     { id: 'dashboard', label: 'Dashboard', path: '/dashboard' },
     { id: 'income', label: 'Income', path: '/income' },
     { id: 'expenses', label: 'Expenses', path: '/expenses' },
-    { id: 'transactions', label: 'Transactions', path: '/transactions' },
   ];
 
   const handleNavClick = (path: string) => {
     navigate(path);
   };
 
-  // Check if current path matches the nav item path
+  //check if current path matches the nav item path
   const isActive = (path: string) => {
     return location.pathname === path;
   };

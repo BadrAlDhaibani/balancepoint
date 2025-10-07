@@ -1,123 +1,85 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface IncomeTransaction {
+export interface Income {
     id: string;
     description: string;
     amount: number;
     date: string;
-    isRecurring: boolean;
+    is_recurring: boolean;
     frequency?: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly';
 }
 
-export interface RecurringIncome {
-    id: string;
-    description: string;
-    amount: number;
-    frequency: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly';
-    isActive: boolean;
-    nextPaymentDate?: string;
-    startDate: string;
-}
-
 interface IncomeState {
-    transactions: IncomeTransaction[];
-    recurringIncome: RecurringIncome[];
+    items: Income[];
+    loading: boolean;
+    error: string | null;
 }
 
-//mock data for development
 const initialState: IncomeState = {
-    transactions: [
+    items: [
         {
             id: '1',
             description: 'Freelance Payment',
             amount: 350.00,
             date: new Date().toISOString().split('T')[0],
-            isRecurring: false,
+            is_recurring: false,
         },
         {
             id: '2',
-            description: 'Side Project Payment',
-            amount: 125.00,
-            date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            isRecurring: false,
-        },
-    ],
-    recurringIncome: [
-        {
-            id: '1',
             description: 'Monthly Salary',
             amount: 2100.00,
+            date: '2024-10-01',
+            is_recurring: true,
             frequency: 'monthly',
-            isActive: true,
-            nextPaymentDate: '2024-10-01',
-            startDate: '2024-01-01',
-        },
-        {
-            id: '2',
-            description: 'Freelance Contract',
-            amount: 800.00,
-            frequency: 'monthly',
-            isActive: true,
-            nextPaymentDate: '2024-10-15',
-            startDate: '2024-06-15',
         },
         {
             id: '3',
-            description: 'Investment Returns',
-            amount: 150.00,
-            frequency: 'quarterly',
-            isActive: true,
-            nextPaymentDate: '2024-12-01',
-            startDate: '2024-01-01',
+            description: 'Freelance Contract',
+            amount: 800.00,
+            date: '2024-10-15',
+            is_recurring: true,
+            frequency: 'monthly',
         },
     ],
+    loading: false,
+    error: null,
 };
 
 const incomeSlice = createSlice({
     name: 'income',
     initialState,
     reducers: {
-        addIncome: (state, action: PayloadAction<IncomeTransaction>) => {
-            state.transactions.unshift(action.payload);
+        addIncome: (state, action: PayloadAction<Income>) => {
+            state.items.unshift(action.payload);
         },
-        addRecurringIncome: (state, action: PayloadAction<RecurringIncome>) => {
-            state.recurringIncome.unshift(action.payload);
-        },
-        updateIncome: (state, action: PayloadAction<IncomeTransaction>) => {
-            const index = state.transactions.findIndex(t => t.id === action.payload.id);
+        updateIncome: (state, action: PayloadAction<Income>) => {
+            const index = state.items.findIndex(i => i.id === action.payload.id);
             if (index !== -1) {
-                state.transactions[index] = action.payload;
+                state.items[index] = action.payload;
             }
         },
         deleteIncome: (state, action: PayloadAction<string>) => {
-            state.transactions = state.transactions.filter(t => t.id !== action.payload);
+            state.items = state.items.filter(i => i.id !== action.payload);
         },
-        updateRecurringIncome: (state, action: PayloadAction<RecurringIncome>) => {
-            const index = state.recurringIncome.findIndex(r => r.id === action.payload.id);
-            if (index !== -1) {
-                state.recurringIncome[index] = action.payload;
-            }
+        setIncomeItems: (state, action: PayloadAction<Income[]>) => {
+            state.items = action.payload;
         },
-        deleteRecurringIncome: (state, action: PayloadAction<string>) => {
-            state.recurringIncome = state.recurringIncome.filter(r => r.id !== action.payload);
+        setLoading: (state, action: PayloadAction<boolean>) => {
+            state.loading = action.payload;
         },
-        toggleRecurringIncome: (state, action: PayloadAction<string>) => {
-            const recurring = state.recurringIncome.find(r => r.id === action.payload);
-            if (recurring) {
-                recurring.isActive = !recurring.isActive;
-            }
+        setError: (state, action: PayloadAction<string | null>) => {
+            state.error = action.payload;
         },
     },
 });
 
 export const {
     addIncome,
-    addRecurringIncome,
     updateIncome,
     deleteIncome,
-    updateRecurringIncome,
-    deleteRecurringIncome,
-    toggleRecurringIncome,
+    setIncomeItems,
+    setLoading,
+    setError,
 } = incomeSlice.actions;
 
 export default incomeSlice.reducer;

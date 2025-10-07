@@ -1,123 +1,85 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface ExpenseTransaction {
+export interface Expense {
     id: string;
     description: string;
     amount: number;
     date: string;
-    isRecurring: boolean;
+    is_recurring: boolean;
     frequency?: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly';
 }
 
-export interface RecurringExpense {
-    id: string;
-    description: string;
-    amount: number;
-    frequency: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly';
-    isActive: boolean;
-    nextPaymentDate?: string;
-    startDate: string;
-}
-
 interface ExpenseState {
-    transactions: ExpenseTransaction[];
-    recurringExpenses: RecurringExpense[];
+    items: Expense[];
+    loading: boolean;
+    error: string | null;
 }
 
-//mock data for development
 const initialState: ExpenseState = {
-    transactions: [
+    items: [
         {
             id: '1',
             description: 'Grocery Shopping',
             amount: 87.43,
             date: new Date().toISOString().split('T')[0],
-            isRecurring: false,
+            is_recurring: false,
         },
         {
             id: '2',
-            description: 'Gas Station',
-            amount: 45.20,
-            date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            isRecurring: false,
-        },
-    ],
-    recurringExpenses: [
-        {
-            id: '1',
             description: 'Rent',
             amount: 1200.00,
+            date: '2024-10-01',
+            is_recurring: true,
             frequency: 'monthly',
-            isActive: true,
-            nextPaymentDate: '2024-10-01',
-            startDate: '2024-01-01',
-        },
-        {
-            id: '2',
-            description: 'Internet Bill',
-            amount: 65.00,
-            frequency: 'monthly',
-            isActive: true,
-            nextPaymentDate: '2024-10-05',
-            startDate: '2024-01-01',
         },
         {
             id: '3',
             description: 'Netflix Subscription',
             amount: 15.99,
+            date: '2024-10-10',
+            is_recurring: true,
             frequency: 'monthly',
-            isActive: true,
-            nextPaymentDate: '2024-10-10',
-            startDate: '2024-03-10',
         },
     ],
+    loading: false,
+    error: null,
 };
 
 const expenseSlice = createSlice({
     name: 'expense',
     initialState,
     reducers: {
-        addExpense: (state, action: PayloadAction<ExpenseTransaction>) => {
-            state.transactions.unshift(action.payload);
+        addExpense: (state, action: PayloadAction<Expense>) => {
+            state.items.unshift(action.payload);
         },
-        addRecurringExpense: (state, action: PayloadAction<RecurringExpense>) => {
-            state.recurringExpenses.unshift(action.payload);
-        },
-        updateExpense: (state, action: PayloadAction<ExpenseTransaction>) => {
-            const index = state.transactions.findIndex(t => t.id === action.payload.id);
+        updateExpense: (state, action: PayloadAction<Expense>) => {
+            const index = state.items.findIndex(e => e.id === action.payload.id);
             if (index !== -1) {
-                state.transactions[index] = action.payload;
+                state.items[index] = action.payload;
             }
         },
         deleteExpense: (state, action: PayloadAction<string>) => {
-            state.transactions = state.transactions.filter(t => t.id !== action.payload);
+            state.items = state.items.filter(e => e.id !== action.payload);
         },
-        updateRecurringExpense: (state, action: PayloadAction<RecurringExpense>) => {
-            const index = state.recurringExpenses.findIndex(r => r.id === action.payload.id);
-            if (index !== -1) {
-                state.recurringExpenses[index] = action.payload;
-            }
+        setExpenseItems: (state, action: PayloadAction<Expense[]>) => {
+            state.items = action.payload;
         },
-        deleteRecurringExpense: (state, action: PayloadAction<string>) => {
-            state.recurringExpenses = state.recurringExpenses.filter(r => r.id !== action.payload);
+        setLoading: (state, action: PayloadAction<boolean>) => {
+            state.loading = action.payload;
         },
-        toggleRecurringExpense: (state, action: PayloadAction<string>) => {
-            const recurring = state.recurringExpenses.find(r => r.id === action.payload);
-            if (recurring) {
-                recurring.isActive = !recurring.isActive;
-            }
+        setError: (state, action: PayloadAction<string | null>) => {
+            state.error = action.payload;
         },
     },
 });
 
 export const {
     addExpense,
-    addRecurringExpense,
     updateExpense,
     deleteExpense,
-    updateRecurringExpense,
-    deleteRecurringExpense,
-    toggleRecurringExpense,
+    setExpenseItems,
+    setLoading,
+    setError,
 } = expenseSlice.actions;
 
 export default expenseSlice.reducer;

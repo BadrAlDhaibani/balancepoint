@@ -14,7 +14,10 @@ import {
 } from './recurringExpenseStyled';
 
 export const RecurringExpense: React.FC = () => {
-    const recurringExpenses = useSelector((state: RootState) => state.expense.recurringExpenses);
+    const expenseItems = useSelector((state: RootState) => state.expense.items);
+    
+    //filter for recurring expenses only
+    const recurringExpenseItems = expenseItems.filter(item => item.is_recurring);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
@@ -23,7 +26,7 @@ export const RecurringExpense: React.FC = () => {
         }).format(amount);
     };
 
-    const formatFrequency = (frequency: string) => {
+    const formatFrequency = (frequency?: string) => {
         switch (frequency) {
             case 'weekly':
                 return 'Every week';
@@ -34,57 +37,50 @@ export const RecurringExpense: React.FC = () => {
             case 'quarterly':
                 return 'Every quarter';
             default:
-                return frequency;
+                return 'Recurring';
         }
     };
 
-    const getNextPaymentText = (frequency: string, nextDate?: string) => {
-        if (nextDate) {
-            const date = new Date(nextDate);
-            return `Next: ${date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            })}`;
-        }
-        
-        //calculate next payment based on frequency
+    const calculateNextPaymentDate = (startDate: string, frequency?: string) => {
         const today = new Date();
-        let nextPayment = new Date(today);
-        
-        switch (frequency) {
-            case 'weekly':
-                nextPayment.setDate(today.getDate() + 7);
-                break;
-            case 'bi-weekly':
-                nextPayment.setDate(today.getDate() + 14);
-                break;
-            case 'monthly':
-                nextPayment.setMonth(today.getMonth() + 1);
-                break;
-            case 'quarterly':
-                nextPayment.setMonth(today.getMonth() + 3);
-                break;
+        let nextDate = new Date(startDate);
+
+        if (!frequency) return 'N/A';
+
+        //keep adding intervals until we're in the future
+        while (nextDate < today) {
+            switch (frequency) {
+                case 'weekly':
+                    nextDate.setDate(nextDate.getDate() + 7);
+                    break;
+                case 'bi-weekly':
+                    nextDate.setDate(nextDate.getDate() + 14);
+                    break;
+                case 'monthly':
+                    nextDate.setMonth(nextDate.getMonth() + 1);
+                    break;
+                case 'quarterly':
+                    nextDate.setMonth(nextDate.getMonth() + 3);
+                    break;
+            }
         }
-        
-        return `Next: ${nextPayment.toLocaleDateString('en-US', { 
+
+        return nextDate.toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric' 
-        })}`;
+        });
     };
-
-    //filter active recurring expenses
-    const activeRecurringExpenses = recurringExpenses.filter(expense => expense.isActive);
 
     return (
         <Card>
             <CardTitle>Recurring Expenses</CardTitle>
-            {activeRecurringExpenses.length > 0 ? (
-                activeRecurringExpenses.map((expense) => (
+            {recurringExpenseItems.length > 0 ? (
+                recurringExpenseItems.map((expense) => (
                     <ExpenseItem key={expense.id}>
                         <ExpenseDetails>
                             <ExpenseTitle>{expense.description}</ExpenseTitle>
                             <ExpenseMeta>
-                                {formatFrequency(expense.frequency)} • {getNextPaymentText(expense.frequency, expense.nextPaymentDate)}
+                                {formatFrequency(expense.frequency)} • Next: {calculateNextPaymentDate(expense.date, expense.frequency)}
                             </ExpenseMeta>
                         </ExpenseDetails>
                         <ExpenseAmountContainer>

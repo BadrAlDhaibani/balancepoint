@@ -24,7 +24,6 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/income" element={<Income />} />
             <Route path="/expenses" element={<Expense />} />
-            <Route path="/transactions" element={<div>Transactions Page - Coming Soon</div>} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </Router>

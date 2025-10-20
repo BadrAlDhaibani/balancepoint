@@ -3,6 +3,10 @@ import styled from 'styled-components';
 export const Card = styled.div`
     background-color: ${props => props.theme.colors.background.card};
     padding: ${props => props.theme.spacing.lg};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        padding: ${props => props.theme.spacing.md};
+    }
 `;
 
 export const SectionTitle = styled.h2`

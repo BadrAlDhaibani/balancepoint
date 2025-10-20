@@ -7,6 +7,10 @@ export const AuthContainer = styled.div`
     min-height: 100vh;
     background-color: ${props => props.theme.colors.background.main};
     padding: ${props => props.theme.spacing.lg};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        padding: ${props => props.theme.spacing.md};
+    }
 `;
 
 export const AuthCard = styled.div`
@@ -16,6 +20,11 @@ export const AuthCard = styled.div`
     box-shadow: ${props => props.theme.shadows.lg};
     width: 100%;
     max-width: 400px;
+
+    ${props => props.theme.mediaQueries.mobile} {
+        padding: ${props => props.theme.spacing.lg};
+        max-width: 100%;
+    }
 `;
 
 export const Logo = styled.h1`
@@ -24,6 +33,10 @@ export const Logo = styled.h1`
     color: ${props => props.theme.colors.primary};
     text-align: center;
     margin-bottom: ${props => props.theme.spacing.md};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes.xl};
+    }
 `;
 
 export const Title = styled.h2`

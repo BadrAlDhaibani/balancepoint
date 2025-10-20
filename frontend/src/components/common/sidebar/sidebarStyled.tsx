@@ -2,15 +2,23 @@ import styled from 'styled-components';
 
 export const SidebarContainer = styled.nav`
   width: 200px;
-  min-height: calc(100vh - 80px); /* Full height minus header */
+  min-height: calc(100vh - 80px);
   background-color: ${props => props.theme.colors.background.main};
   border-right: 3px solid #f8fafc;
-  padding: ${props => props.theme.spacing.lg} 0; /* Remove horizontal padding */
+  padding: ${props => props.theme.spacing.lg} 0;
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 80px; /* Start below header */
+  top: 80px;
   z-index: 100;
+
+  ${props => props.theme.mediaQueries.mobile} {
+    display: none;
+  }
+
+  ${props => props.theme.mediaQueries.tablet} {
+    width: 180px;
+  }
 `;
 
 export const NavMenu = styled.ul`

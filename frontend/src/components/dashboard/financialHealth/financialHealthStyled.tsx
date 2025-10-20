@@ -3,6 +3,10 @@ import styled from 'styled-components';
 export const Card = styled.div`
     background-color: ${props => props.theme.colors.background.card};
     padding: ${props => props.theme.spacing.lg};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        padding: ${props => props.theme.spacing.md};
+    }
 `;
 
 export const SectionTitle = styled.h2`
@@ -18,6 +22,10 @@ export const BalanceAmount = styled.div`
     color: ${props => props.theme.colors.text.primary};
     margin-bottom: ${props => props.theme.spacing.xs};
     line-height: 1.2;
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes['2xl']};
+    }
 `;
 
 export const BalanceLabel = styled.div`
@@ -147,6 +155,10 @@ export const NextIncomeDays = styled.div`
     font-size: ${props => props.theme.fontSizes['3xl']};
     font-weight: 700;
     color: ${props => props.theme.colors.text.primary};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes.xl};
+    }
 `;
 
 export const NextIncomeDetails = styled.div`

@@ -6,7 +6,7 @@ export const QuickAddSection = styled.div`
     margin-bottom: ${props => props.theme.spacing.xl};
     border: 1px solid ${props => props.theme.colors.status.income};
 
-    @media (max-wdith: 768px) {
+    ${props => props.theme.mediaQueries.mobile} {
         padding: ${props => props.theme.spacing.md};
         margin-bottom: ${props => props.theme.spacing.lg};
     }
@@ -24,7 +24,7 @@ export const FormRow = styled.div`
     gap: ${props => props.theme.spacing.md};
     margin-bottom: ${props => props.theme.spacing.md};
 
-    @media (max-width: 768px) {
+    ${props => props.theme.mediaQueries.mobile} {
         flex-direction: column;
         gap: ${props => props.theme.spacing.sm};
     }
@@ -32,10 +32,10 @@ export const FormRow = styled.div`
 
 export const FormGroup = styled.div`
     flex: 1;
-    min-wdith: 200px;
+    min-width: 200px;
 
-    @media (max-width: 768px) {
-        min-wdith: 100%; 
+    ${props => props.theme.mediaQueries.mobile} {
+        min-width: 100%;
     }
 `;
 
@@ -106,7 +106,7 @@ export const ActionButtons = styled.div`
     display: flex;
     gap: ${props => props.theme.spacing.sm};
 
-    @media (max-width: 768px) {
+    ${props => props.theme.mediaQueries.mobile} {
         flex-direction: column;
     }
 `;
@@ -142,8 +142,8 @@ export const Button = styled.button`
         box-shadow: none;
     }
 
-    @media (max-width: 768px) {
-        min-width: 100%;
+    ${props => props.theme.mediaQueries.mobile} {
+        width: 100%;
         padding: ${props => props.theme.spacing.md};
     }
 `;

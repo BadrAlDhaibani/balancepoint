@@ -61,6 +61,18 @@ export const theme = {
     normal: '0.2s ease',
     slow: '0.3s ease',
   },
+  breakpoints: {
+    mobile: '767px',
+    tablet: '1024px',
+    desktop: '1025px',
+  },
+  mediaQueries: {
+    mobile: '@media (max-width: 767px)',
+    tablet: '@media (min-width: 768px) and (max-width: 1024px)',
+    desktop: '@media (min-width: 1025px)',
+    tabletAndUp: '@media (min-width: 768px)',
+    mobileAndTablet: '@media (max-width: 1024px)',
+  },
   icons: {
     status: {
       good: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%2316a34a'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'/%3E%3C/svg%3E")`,

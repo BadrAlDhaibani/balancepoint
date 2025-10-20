@@ -127,9 +127,13 @@ export const LinkText = styled.p`
     color: ${props => props.theme.colors.text.secondary};
     margin-top: ${props => props.theme.spacing.lg};
 
-    a {
+    button {
+        background: none;
+        border: none;
+        padding: 0;
         color: ${props => props.theme.colors.primary};
         font-weight: 600;
+        font-size: inherit;
         cursor: pointer;
 
         &:hover {

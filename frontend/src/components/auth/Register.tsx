@@ -123,7 +123,7 @@ const Register: React.FC = () => {
                 </Form>
 
                 <LinkText>
-                    Already have an account? <a onClick={() => navigate('/login')}>Log in</a>
+                    Already have an account? <button type="button" onClick={() => navigate('/login')}>Log in</button>
                 </LinkText>
             </AuthCard>
         </AuthContainer>

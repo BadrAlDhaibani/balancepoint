@@ -86,7 +86,7 @@ const Login: React.FC = () => {
                 </Form>
 
                 <LinkText>
-                    Don't have an account? <a onClick={() => navigate('/register')}>Sign up</a>
+                    Don't have an account? <button type="button" onClick={() => navigate('/register')}>Sign up</button>
                 </LinkText>
             </AuthCard>
         </AuthContainer>

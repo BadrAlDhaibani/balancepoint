@@ -12,25 +12,38 @@ BalancePoint is a personal finance management application built with a TypeScrip
 
 ## Development Commands
 
+**IMPORTANT: This project uses yarn exclusively. Do not use npm.**
+
 ### Backend (from `backend/` directory)
 ```bash
 yarn dev          # Start development server with nodemon (port 5000)
 yarn build        # Compile TypeScript to dist/
 yarn start        # Run production build from dist/
+yarn prod         # Build and start production server
 ```
 
 ### Frontend (from `frontend/` directory)
 ```bash
-npm start         # Start CRA dev server (port 3000)
-npm test          # Run Jest test suite in watch mode
-npm run build     # Build production bundle
+yarn start        # Start CRA dev server (port 3000)
+yarn test         # Run Jest test suite in watch mode
+yarn build        # Build production bundle
 ```
 
-### Running the Application
-1. Start backend first: `cd backend && yarn dev`
-2. Start frontend: `cd frontend && npm start`
-3. Backend runs on http://localhost:5000
-4. Frontend runs on http://localhost:3000
+### Root Directory Commands
+```bash
+yarn dev:backend      # Start backend dev server
+yarn dev:frontend     # Start frontend dev server
+yarn build:backend    # Compile backend TypeScript
+yarn build:frontend   # Build frontend production bundle
+yarn install:all      # Install all dependencies (both apps)
+```
+
+### Running the Application Locally
+1. Install dependencies: `yarn install:all` (from root)
+2. Start backend: `yarn dev:backend` (or `cd backend && yarn dev`)
+3. Start frontend: `yarn dev:frontend` (or `cd frontend && yarn start`)
+4. Backend runs on http://localhost:5000
+5. Frontend runs on http://localhost:3000
 
 ## Architecture
 
@@ -187,3 +200,48 @@ FRONTEND_URL=http://localhost:3000
 1. Create component in `frontend/src/components/`
 2. Add Route inside ProtectedRoute wrapper in `App.tsx`
 3. Add navigation link in Sidebar component
+
+## Deployment
+
+### Backend Deployment (Render)
+
+**Render Configuration:**
+- **Root Directory**: `backend`
+- **Build Command**: `yarn install && yarn build`
+- **Start Command**: `yarn start`
+- **Environment**: Node
+
+**Important Notes:**
+- Setting Root Directory to `backend` ensures Render only builds/deploys the backend
+- The build command compiles TypeScript to JavaScript in the `dist/` folder
+- The start command runs the compiled production code (not dev mode with nodemon)
+- All environment variables must be set in Render dashboard (see Environment Configuration above)
+- Frontend is deployed separately (e.g., Vercel, Netlify, or Render Static Site)
+
+**Environment Variables Required on Render:**
+```
+PORT=5000
+NODE_ENV=production
+DATABASE_URL=<your-neon-postgresql-url>
+JWT_SECRET=<your-secret-key>
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=<your-deployed-frontend-url>
+```
+
+### Frontend Deployment
+
+The frontend should be deployed to a static hosting service since it's a Create React App build:
+- **Vercel**: Automatic deployments from GitHub
+- **Netlify**: Automatic deployments from GitHub
+- **Render Static Site**: Manual or GitHub-connected deployments
+
+Build command: `yarn build`
+Publish directory: `build`
+
+**Environment Variables:**
+Create a `.env.production` file in `frontend/` with:
+```
+REACT_APP_API_URL=<your-backend-url>
+```
+
+Then update the API services to use this environment variable instead of hardcoded localhost URLs.

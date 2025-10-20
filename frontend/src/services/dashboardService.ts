@@ -20,6 +20,7 @@ export interface DashboardData {
     total_income: number;
     total_expenses: number;
     upcoming_events: UpcomingEvent[];
+    recent_activity: UpcomingEvent[];
 }
 
 export const dashboardService = {

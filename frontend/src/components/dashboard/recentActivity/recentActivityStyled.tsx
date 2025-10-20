@@ -73,30 +73,33 @@ export const ActivityTitle = styled.div`
 export const ActivityMeta = styled.div`
     font-size: ${props => props.theme.fontSizes.base};
     color: ${props => props.theme.colors.text.secondary};
+`;
+
+export const ActivityAmount = styled.div<{ $type: 'income' | 'expense' }>`
     display: flex;
     align-items: center;
+    gap: ${props => props.theme.spacing.sm};
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: ${props => props.theme.fontSizes.base};
+    color: ${props => props.$type === 'income'
+        ? props.theme.colors.status.income
+        : props.theme.colors.status.expense};
+    text-align: right;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        justify-content: space-between;
+    }
 `;
 
 export const ActivityType = styled.span<{
     $type: 'income' | 'expense';
     $isRecurring: boolean
 }>`
-    display: inline-flex;
-    align-items: center;
-    padding: 2px ${props => props.theme.spacing.xs};
-    border-radius: ${props => props.theme.borderRadius.sm};
     font-size: ${props => props.theme.fontSizes.xs};
-    font-weight: 400;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-left: auto;
-
-    font-weight: ${props => {
-        if (props.$isRecurring) {
-            return 600;
-        }
-        return 400;
-    }};
 
     color: ${props => {
         if (props.$isRecurring) {
@@ -104,16 +107,6 @@ export const ActivityType = styled.span<{
         }
         return props.theme.colors.text.secondary;
     }};
-`;
-
-export const ActivityAmount = styled.div<{ $type: 'income' | 'expense' }>`
-    font-weight: 600;
-    font-size: ${props => props.theme.fontSizes.base};
-    color: ${props => props.$type === 'income'
-        ? props.theme.colors.status.income
-        : props.theme.colors.status.expense};
-    text-align: right;
-    min-width: fit-content;
 `;
 
 export const EmptyState = styled.div`

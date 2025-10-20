@@ -51,7 +51,9 @@ const FinancialHealth: React.FC<FinancialHealthProps> = ({
 
     const formatNextIncomeDate = (dateStr: string) => {
         if (dateStr === 'N/A') return 'N/A';
-        const date = new Date(dateStr);
+        // Parse YYYY-MM-DD format without timezone conversion
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         return date.toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric'
@@ -89,7 +91,9 @@ const FinancialHealth: React.FC<FinancialHealthProps> = ({
             {showNextIncome && next_income_date !== 'N/A' && (
                 <NextIncomeSection>
                     <NextIncomeLabel>Next Income</NextIncomeLabel>
-                    <NextIncomeDays>{days_until_next_income} days</NextIncomeDays>
+                    <NextIncomeDays>
+                        {days_until_next_income} {days_until_next_income === 1 ? 'day' : 'days'}
+                    </NextIncomeDays>
                     <NextIncomeDetails>
                         ${next_income_amount.toFixed(2)} - {formatNextIncomeDate(next_income_date)}
                     </NextIncomeDetails>

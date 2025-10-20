@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import { getHistoricalIncome, getUpcomingIncome } from '../models/Income';
 import { getHistoricalExpenses, getUpcomingExpenses } from '../models/Expense';
-import { calculateHealthStatus, daysBetween } from '../utils/helpers';
+import { calculateHealthStatus, daysBetween, formatDate } from '../utils/helpers';
 
 //get dashboard summary
 export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
@@ -31,7 +31,7 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
     //determine health status
     const healthStatus = calculateHealthStatus(incomeVsExpenseRatio);
 
-    //find next upcoming income
+    //find next upcoming income and sum all income on that date
     let nextIncomeDate = 'N/A';
     let nextIncomeAmount = 0;
     let daysUntilNextIncome = 0;
@@ -39,7 +39,15 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
     if (upcomingIncome.length > 0) {
         const nextIncome = upcomingIncome[0]; // Already sorted by date ASC
         nextIncomeDate = new Date(nextIncome.date).toISOString().split('T')[0];
-        nextIncomeAmount = Number(nextIncome.amount);
+
+        // Sum all income that occurs on the same date
+        nextIncomeAmount = upcomingIncome
+            .filter(income => {
+                const incomeDate = new Date(income.date).toISOString().split('T')[0];
+                return incomeDate === nextIncomeDate;
+            })
+            .reduce((sum, income) => sum + Number(income.amount), 0);
+
         daysUntilNextIncome = daysBetween(new Date(), new Date(nextIncome.date));
     }
 
@@ -50,7 +58,7 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
             type: 'income' as const,
             description: item.description,
             amount: Number(item.amount),
-            date: item.date,
+            date: formatDate(new Date(item.date)),
             is_recurring: item.is_recurring,
             frequency: item.frequency
         })),
@@ -59,11 +67,35 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
             type: 'expense' as const,
             description: item.description,
             amount: Number(item.amount),
-            date: item.date,
+            date: formatDate(new Date(item.date)),
             is_recurring: item.is_recurring,
             frequency: item.frequency
         }))
     ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    //combine and sort recent activity (5 most recent past transactions)
+    const recentActivity = [
+        ...historicalIncome.map(item => ({
+            id: item.id,
+            type: 'income' as const,
+            description: item.description,
+            amount: Number(item.amount),
+            date: formatDate(new Date(item.date)),
+            is_recurring: item.is_recurring,
+            frequency: item.frequency
+        })),
+        ...historicalExpenses.map(item => ({
+            id: item.id,
+            type: 'expense' as const,
+            description: item.description,
+            amount: Number(item.amount),
+            date: formatDate(new Date(item.date)),
+            is_recurring: item.is_recurring,
+            frequency: item.frequency
+        }))
+    ]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort DESC (most recent first)
+        .slice(0, 5); // Take only 5 most recent
 
     res.json({
         success: true,
@@ -76,7 +108,8 @@ export const getDashboardSummary = async (req: AuthRequest, res: Response) => {
             days_until_next_income: daysUntilNextIncome,
             total_income: totalHistoricalIncome,
             total_expenses: totalHistoricalExpenses,
-            upcoming_events: upcomingEvents
+            upcoming_events: upcomingEvents,
+            recent_activity: recentActivity
         }
     });
 };

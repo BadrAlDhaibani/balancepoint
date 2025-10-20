@@ -37,33 +37,20 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
     showViewAll = false,
     onViewAll
 }) => {
-    const incomeItems = useSelector((state: RootState) => state.income.items);
-    const expenseItems = useSelector((state: RootState) => state.expense.items);
+    const dashboardData = useSelector((state: RootState) => state.dashboard.data);
 
-    //combine income and expenses
-    const allTransactions: CombinedTransaction[] = [
-        ...incomeItems.map(item => ({
-            id: item.id,
-            description: item.description,
-            amount: item.amount,
-            date: item.date,
-            type: 'income' as const,
-            is_recurring: item.is_recurring
-        })),
-        ...expenseItems.map(item => ({
-            id: item.id,
-            description: item.description,
-            amount: item.amount,
-            date: item.date,
-            type: 'expense' as const,
-            is_recurring: item.is_recurring
-        }))
-    ];
+    //use recent_activity from dashboard if available, otherwise fallback to empty array
+    const recentActivity = dashboardData?.recent_activity || [];
 
-    //sort by date and get most recent
-    const sortedTransactions = allTransactions
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, maxTransactions);
+    //map to component format
+    const sortedTransactions: CombinedTransaction[] = recentActivity.map(item => ({
+        id: item.id,
+        description: item.description,
+        amount: item.amount,
+        date: item.date,
+        type: item.type,
+        is_recurring: item.is_recurring
+    }));
 
     const formatAmount = (amount: number, type: 'income' | 'expense') => {
         const prefix = type === 'income' ? '+' : '-';
@@ -82,7 +69,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                 <button onClick={onViewAll}>View All</button>
             )}
         </SectionTitle>
-    
+
         <ActivityList>
             {sortedTransactions.length > 0 ? (
                 sortedTransactions.map((transaction) => (
@@ -90,14 +77,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                         <ActivityDetails>
                             <ActivityTitle>{transaction.description}</ActivityTitle>
                             <ActivityMeta>
-                                {formatDateLabel(transaction.date)} • {getTransactionTypeLabel(transaction.is_recurring)}
-                                <ActivityType $type={transaction.type} $isRecurring={transaction.is_recurring}>
-                                    {getTransactionTypeLabel(transaction.is_recurring)}
-                                </ActivityType>
+                                {formatDateLabel(transaction.date)} • {transaction.is_recurring ? 'Automatic' : 'Manual Entry'}
                             </ActivityMeta>
                         </ActivityDetails>
                         <ActivityAmount $type={transaction.type}>
                             {formatAmount(transaction.amount, transaction.type)}
+                            <ActivityType $type={transaction.type} $isRecurring={transaction.is_recurring}>
+                                {getTransactionTypeLabel(transaction.is_recurring).toUpperCase()}
+                            </ActivityType>
                         </ActivityAmount>
                     </ActivityItem>
                 ))

@@ -92,6 +92,6 @@ export const formatDate = (date: Date): string => {
 //calculate days between two dates
 export const daysBetween = (date1: Date, date2: Date): number => {
     const oneDay = 24 * 60 * 60 * 1000;
-    const diffInMs = Math.abs(date1.getTime() - date2.getTime());
-    return Math.round(diffInMs / oneDay);
+    const diffInMs = date2.getTime() - date1.getTime();
+    return Math.ceil(diffInMs / oneDay);
 };

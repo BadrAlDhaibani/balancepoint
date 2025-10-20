@@ -12,10 +12,10 @@ export const SectionTitle = styled.h2`
     color: ${props => props.theme.colors.text.primary};
 `;
 
-export const InsightCard = styled.div<{ type: 'good' | 'warning' | 'info' }>`
+export const InsightCard = styled.div<{ $type: 'good' | 'warning' | 'info' }>`
     padding: ${props => props.theme.spacing.md};
     background-color: ${props => {
-        switch (props.type) {
+        switch (props.$type) {
             case 'good':
                 return props.theme.colors.accent.green;
             case 'warning':

@@ -54,6 +54,16 @@ export interface Expense {
 }
 
 //Dashboard types
+export interface UpcomingEvent {
+    id: string;
+    type: 'income' | 'expense';
+    description: string;
+    amount: number;
+    date: Date;
+    is_recurring: boolean;
+    frequency?: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly';
+}
+
 export interface FinancialHealth {
     available_balance: number;
     health_status: 'good' | 'warning' | 'critical';
@@ -61,6 +71,9 @@ export interface FinancialHealth {
     next_income_date: string;
     next_income_amount: number;
     days_until_next_income: number;
+    total_income: number;
+    total_expenses: number;
+    upcoming_events: UpcomingEvent[];
 }
 
 export interface Insight {

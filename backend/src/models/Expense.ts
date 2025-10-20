@@ -142,3 +142,30 @@ export const deleteExpense = async (
 
     return result.rowCount !== null && result.rowCount > 0;
 };
+
+//get historical expenses (last 30 days including today)
+export const getHistoricalExpenses = async (userId: string): Promise<Expense[]> => {
+    const result = await query(
+        `SELECT * FROM expenses
+         WHERE user_id = $1
+         AND date <= CURRENT_DATE
+         AND date >= CURRENT_DATE - INTERVAL '30 days'
+         ORDER BY date DESC`,
+        [userId]
+    );
+
+    return result.rows;
+};
+
+//get upcoming expenses (after today)
+export const getUpcomingExpenses = async (userId: string): Promise<Expense[]> => {
+    const result = await query(
+        `SELECT * FROM expenses
+         WHERE user_id = $1
+         AND date > CURRENT_DATE
+         ORDER BY date ASC`,
+        [userId]
+    );
+
+    return result.rows;
+};

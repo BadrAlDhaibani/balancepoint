@@ -28,117 +28,70 @@ interface FinancialHealthProps {
 const FinancialHealth: React.FC<FinancialHealthProps> = ({
     showNextIncome = true
 }) => {
-    const incomeItems = useSelector((state: RootState) => state.income.items);
-    const expenseItems = useSelector((state: RootState) => state.expense.items);
+    const dashboardData = useSelector((state: RootState) => state.dashboard.data);
+    const loading = useSelector((state: RootState) => state.dashboard.loading);
 
-    //calculate total income and expenses
-    const totalIncome = incomeItems.reduce((sum, item) => sum + item.amount, 0);
-    const totalExpenses = expenseItems.reduce((sum, item) => sum + item.amount, 0);
-    const availableBalance = totalIncome - totalExpenses;
-
-    //calculate income vs expense ratio
-    const incomeVsExpenseRatio = totalIncome > 0 
-        ? Math.round((totalIncome / (totalIncome + totalExpenses)) * 100)
-        : 0;
-
-    //determine health status
-    const getHealthStatus = (): 'good' | 'warning' | 'critical' => {
-        if (incomeVsExpenseRatio >= 66) return 'good';
-        if (incomeVsExpenseRatio >= 33) return 'warning';
-        return 'critical';
-    };
-
-    //find next recurring income
-    const recurringIncome = incomeItems.filter(i => i.is_recurring);
-    const calculateNextPayment = (startDate: string, frequency?: string) => {
-        const today = new Date();
-        let nextDate = new Date(startDate);
-
-        if (!frequency) return nextDate;
-
-        while (nextDate < today) {
-            switch (frequency) {
-                case 'weekly':
-                    nextDate.setDate(nextDate.getDate() + 7);
-                    break;
-                case 'bi-weekly':
-                    nextDate.setDate(nextDate.getDate() + 14);
-                    break;
-                case 'monthly':
-                    nextDate.setMonth(nextDate.getMonth() + 1);
-                    break;
-                case 'quarterly':
-                    nextDate.setMonth(nextDate.getMonth() + 3);
-                    break;
-            }
-        }
-        return nextDate;
-    };
-
-    //find closest upcoming income
-    let nextIncomeDate = 'N/A';
-    let nextIncomeAmount = 0;
-    let daysUntilNextIncome = 0;
-
-    if (recurringIncome.length > 0) {
-        const upcomingIncomes = recurringIncome.map(income => ({
-            ...income,
-            nextPayment: calculateNextPayment(income.date, income.frequency)
-        }));
-
-        const nextIncome = upcomingIncomes.sort((a, b) =>
-            a.nextPayment.getTime() - b.nextPayment.getTime()
-        )[0];
-
-        nextIncomeDate = nextIncome.nextPayment.toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric'
-        });
-        // Ensure amount is a number
-        nextIncomeAmount = typeof nextIncome.amount === 'number'
-            ? nextIncome.amount
-            : parseFloat(nextIncome.amount) || 0;
-        daysUntilNextIncome = Math.ceil(
-            (nextIncome.nextPayment.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    if (loading || !dashboardData) {
+        return (
+            <Card>
+                <SectionTitle>Financial Health Overview</SectionTitle>
+                <BalanceLabel>Loading...</BalanceLabel>
+            </Card>
         );
     }
 
-    const healthStatus = getHealthStatus();
+    const {
+        available_balance,
+        health_status,
+        income_vs_expense_ratio,
+        next_income_date,
+        next_income_amount,
+        days_until_next_income
+    } = dashboardData;
+
+    const formatNextIncomeDate = (dateStr: string) => {
+        if (dateStr === 'N/A') return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
+        });
+    };
 
     return (
         <Card>
             <SectionTitle>Financial Health Overview</SectionTitle>
 
-            <BalanceAmount>${availableBalance.toFixed(2)}</BalanceAmount>
+            <BalanceAmount>${available_balance.toFixed(2)}</BalanceAmount>
             <BalanceLabel>
                 Available Balance<br />
                 Last 30 Days
             </BalanceLabel>
 
-            <HealthStatus status={healthStatus}>
+            <HealthStatus status={health_status}>
                 <HealthStatusLabel>Health Status:</HealthStatusLabel>
-                <HealthStatusValue status={healthStatus}>
-                    {healthStatus}
+                <HealthStatusValue status={health_status}>
+                    {health_status}
                 </HealthStatusValue>
             </HealthStatus>
 
             <RatioSection>
                 <RatioLabel>Quick Ratio</RatioLabel>
                 <RatioProgress>
-                    <RatioFill percentage={incomeVsExpenseRatio} />
-                    <RatioGap percentage={incomeVsExpenseRatio} />
+                    <RatioFill percentage={income_vs_expense_ratio} />
+                    <RatioGap percentage={income_vs_expense_ratio} />
                 </RatioProgress>
                 <RatioText>
                     Income vs Expenses
                 </RatioText>
             </RatioSection>
 
-            {showNextIncome && recurringIncome.length > 0 && (
+            {showNextIncome && next_income_date !== 'N/A' && (
                 <NextIncomeSection>
                     <NextIncomeLabel>Next Income</NextIncomeLabel>
-                    <NextIncomeDays>{daysUntilNextIncome} days</NextIncomeDays>
+                    <NextIncomeDays>{days_until_next_income} days</NextIncomeDays>
                     <NextIncomeDetails>
-                        ${nextIncomeAmount.toFixed(2)} - {nextIncomeDate}
+                        ${next_income_amount.toFixed(2)} - {formatNextIncomeDate(next_income_date)}
                     </NextIncomeDetails>
                 </NextIncomeSection>
             )}

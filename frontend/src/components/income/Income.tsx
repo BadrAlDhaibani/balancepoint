@@ -11,6 +11,7 @@ import { QuickAddIncome } from './quickAddIncome';
 import { IncomeSummary } from './incomeSummary';
 import { RecurringIncome } from './recurringIncome';
 import { RecentIncomeActivity } from './recentIncomeActivity';
+import { PageLoader } from '../common/PageLoader';
 
 const Income: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +20,10 @@ const Income: React.FC = () => {
     useEffect(() => {
         dispatch(fetchAllIncome());
     }, [dispatch]);
+
+    if (loading) {
+        return <PageLoader />;
+    }
 
     return (
         <PageContainer>

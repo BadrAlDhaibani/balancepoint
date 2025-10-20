@@ -9,6 +9,6 @@ const router = Router();
 router.use(authenticateToken);
 
 //dashboard routes
-router.get('/summary', asyncHandler(getDashboardSummary));
+router.get('/', asyncHandler(getDashboardSummary));
 
 export default router;

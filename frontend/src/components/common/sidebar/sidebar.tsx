@@ -31,7 +31,7 @@ export const Sidebar: React.FC = () => {
         {navItems.map((item) => (
           <NavItem
             key={item.id}
-            isActive={isActive(item.path)}
+            $isActive={isActive(item.path)}
             onClick={() => handleNavClick(item.path)}
           >
             {item.label}

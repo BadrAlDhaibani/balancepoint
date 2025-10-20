@@ -91,12 +91,12 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                             <ActivityTitle>{transaction.description}</ActivityTitle>
                             <ActivityMeta>
                                 {formatDateLabel(transaction.date)} • {getTransactionTypeLabel(transaction.is_recurring)}
-                                <ActivityType type={transaction.type} isRecurring={transaction.is_recurring}>
+                                <ActivityType $type={transaction.type} $isRecurring={transaction.is_recurring}>
                                     {getTransactionTypeLabel(transaction.is_recurring)}
                                 </ActivityType>
                             </ActivityMeta>
                         </ActivityDetails>
-                        <ActivityAmount type={transaction.type}>
+                        <ActivityAmount $type={transaction.type}>
                             {formatAmount(transaction.amount, transaction.type)}
                         </ActivityAmount>
                     </ActivityItem>

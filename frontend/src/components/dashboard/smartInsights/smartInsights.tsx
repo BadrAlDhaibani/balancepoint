@@ -53,7 +53,7 @@ const SmartInsights: React.FC<SmartInsightsProps> = ({ maxInsights = 4 }) => {
         <Card>
             <SectionTitle>Smart Insights</SectionTitle>
             {displayedInsights.map((insight: Insight) => (
-                <InsightCard key={insight.id} type={insight.type}>
+                <InsightCard key={insight.id} $type={insight.type}>
                     <InsightMessage>{insight.message}</InsightMessage>
                     {insight.details && (
                         <InsightDetails>{insight.details}</InsightDetails>

@@ -142,3 +142,30 @@ export const deleteIncome = async (
 
     return result.rowCount !== null && result.rowCount > 0;
 };
+
+//get historical income (last 30 days including today)
+export const getHistoricalIncome = async (userId: string): Promise<Income[]> => {
+    const result = await query(
+        `SELECT * FROM income
+         WHERE user_id = $1
+         AND date <= CURRENT_DATE
+         AND date >= CURRENT_DATE - INTERVAL '30 days'
+         ORDER BY date DESC`,
+        [userId]
+    );
+
+    return result.rows;
+};
+
+//get upcoming income (after today)
+export const getUpcomingIncome = async (userId: string): Promise<Income[]> => {
+    const result = await query(
+        `SELECT * FROM income
+         WHERE user_id = $1
+         AND date > CURRENT_DATE
+         ORDER BY date ASC`,
+        [userId]
+    );
+
+    return result.rows;
+};

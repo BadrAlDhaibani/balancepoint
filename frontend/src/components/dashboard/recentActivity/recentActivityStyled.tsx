@@ -73,9 +73,9 @@ export const ActivityMeta = styled.div`
     align-items: center;
 `;
 
-export const ActivityType = styled.span<{ 
-    type: 'income' | 'expense'; 
-    isRecurring: boolean 
+export const ActivityType = styled.span<{
+    $type: 'income' | 'expense';
+    $isRecurring: boolean
 }>`
     display: inline-flex;
     align-items: center;
@@ -88,24 +88,24 @@ export const ActivityType = styled.span<{
     margin-left: auto;
 
     font-weight: ${props => {
-        if (props.isRecurring) {
+        if (props.$isRecurring) {
             return 600;
         }
         return 400;
     }};
 
     color: ${props => {
-        if (props.isRecurring) {
+        if (props.$isRecurring) {
             return props.theme.colors.primary;
         }
         return props.theme.colors.text.secondary;
     }};
 `;
 
-export const ActivityAmount = styled.div<{ type: 'income' | 'expense' }>`
+export const ActivityAmount = styled.div<{ $type: 'income' | 'expense' }>`
     font-weight: 600;
     font-size: ${props => props.theme.fontSizes.base};
-    color: ${props => props.type === 'income'
+    color: ${props => props.$type === 'income'
         ? props.theme.colors.status.income
         : props.theme.colors.status.expense};
     text-align: right;

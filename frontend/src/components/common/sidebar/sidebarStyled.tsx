@@ -21,17 +21,17 @@ export const NavMenu = styled.ul`
   flex-direction: column;
 `;
 
-export const NavItem = styled.li<{ isActive: boolean }>`
+export const NavItem = styled.li<{ $isActive: boolean }>`
   padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.md};
   cursor: pointer;
   font-size: ${props => props.theme.fontSizes.lg};
-  font-weight: ${props => props.isActive ? 700 : 400};
+  font-weight: ${props => props.$isActive ? 700 : 400};
   transition: all ${props => props.theme.transitions.fast};
   width: 100%; /* Full width */
   color: ${props => props.theme.colors.primary}; /* Always purple */
-    
-  background-color: ${props => props.isActive 
-    ? '#f8fafc' 
+
+  background-color: ${props => props.$isActive
+    ? '#f8fafc'
     : 'transparent'};
 
   &:hover {

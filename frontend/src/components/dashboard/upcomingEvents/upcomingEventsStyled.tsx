@@ -51,17 +51,17 @@ export const EventDate = styled.div`
     color: ${props => props.theme.colors.text.secondary};
 `;
 
-export const EventAmount = styled.div<{ type: 'income' | 'expense' }>`
+export const EventAmount = styled.div<{ $type: 'income' | 'expense' }>`
     font-weight: 600;
     font-size: ${props => props.theme.fontSizes.base};
-    color: ${props => props.type === 'income' 
-        ? props.theme.colors.status.income 
+    color: ${props => props.$type === 'income'
+        ? props.theme.colors.status.income
         : props.theme.colors.status.expense};
     text-align: right;
     min-width: fit-content;
 
     &::before {
-        content: '${props => props.type === 'income' ? '↗' : '↙'}';
+        content: '${props => props.$type === 'income' ? '↗' : '↙'}';
         display: inline-block;
         margin-right: ${props => props.theme.spacing.xs};
         font-size: ${props => props.theme.fontSizes.base};

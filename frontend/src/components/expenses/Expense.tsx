@@ -11,6 +11,7 @@ import { QuickAddExpense } from './quickAddExpense';
 import { ExpenseSummary } from './expenseSummary';
 import { RecurringExpense } from './recurringExpense';
 import { RecentExpenseActivity } from './recentExpenseActivity';
+import { PageLoader } from '../common/PageLoader';
 
 const Expense: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +20,10 @@ const Expense: React.FC = () => {
     useEffect(() => {
         dispatch(fetchAllExpenses());
     }, [dispatch]);
+
+    if (loading) {
+        return <PageLoader />;
+    }
 
     return (
         <PageContainer>

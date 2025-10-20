@@ -7,9 +7,11 @@ import { Global } from './utils/global';
 import { theme } from './utils/theme';
 import { Header } from './components/common/header';
 import { Sidebar } from './components/common/sidebar';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 import Dashboard from './components/dashboard/Dashboard';
 import { Income } from './components/income';
 import { Expense } from './components/expenses';
+import { Login, Register } from './components/auth';
 
 const App: React.FC = () => {
   return (
@@ -17,14 +19,27 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <Global />
         <Router>
-          <Header onAddClick={() => console.log('Add button clicked')} />
-          <Sidebar />
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/income" element={<Income />} />
-            <Route path="/expenses" element={<Expense />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* Auth routes - no header/sidebar */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* App routes - with header/sidebar */}
+            <Route path="/*" element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <Sidebar />
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/income" element={<Income />} />
+                    <Route path="/expenses" element={<Expense />} />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                  </Routes>
+                </>
+              </ProtectedRoute>
+            } />
           </Routes>
         </Router>
       </ThemeProvider>

@@ -3,12 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-//create postgreSQL connection pool
+//create postgreSQL connection pool for Neon
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
-        rejectUnauthorized: false //needed for Neon
-    }
+        rejectUnauthorized: false
+    },
+    max: 20, // maximum number of clients in the pool
+    idleTimeoutMillis: 30000, // close idle clients after 30 seconds
+    connectionTimeoutMillis: 30000, // return an error after 30 seconds if connection could not be established
 });
 
 //test database connection

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../../services';
 import { HeaderContainer, Logo, AddButtonContainer, AddButton, DropdownMenu, DropdownItem } from './headerStyled';
 
 interface HeaderProps {
@@ -29,6 +30,11 @@ const Header: React.FC<HeaderProps> = ({ onAddClick }) => {
     setTimeout(() => {
       document.getElementById('quick-add')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    setShowDropdown(false);
   };
 
   //close dropdown when clicking outside
@@ -61,6 +67,7 @@ const Header: React.FC<HeaderProps> = ({ onAddClick }) => {
           <DropdownMenu>
             <DropdownItem onClick={handleAddIncome}>Add Income</DropdownItem>
             <DropdownItem onClick={handleAddExpense}>Add Expense</DropdownItem>
+            <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
           </DropdownMenu>
         )}
       </AddButtonContainer>

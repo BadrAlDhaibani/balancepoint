@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addExpense } from '../../../store/slices/expenseSlice';
+import { AppDispatch } from '../../../store';
+import { createExpense } from '../../../store/slices/expenseSlice';
 import {
     QuickAddSection,
     QuickAddTitle,
@@ -13,11 +14,16 @@ import {
     Button,
 }from './quickAddExpenseStyled';
 
+const getTodayDate = () => {
+    return new Date().toISOString().split('T')[0];
+};
+
 export const QuickAddExpense: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const [formData, setFormData] = useState({
         description: '',
         amount: '',
+        date: getTodayDate(),
         type: 'one-time' as 'one-time' | 'recurring',
         frequency: 'monthly' as 'monthly' | 'weekly' | 'bi-weekly' | 'quarterly',
     });
@@ -34,6 +40,7 @@ export const QuickAddExpense: React.FC = () => {
         setFormData({
             description: '',
             amount: '',
+            date: getTodayDate(),
             type: 'one-time',
             frequency: 'monthly',
         });
@@ -51,20 +58,24 @@ export const QuickAddExpense: React.FC = () => {
         return true;
     };
 
-    const handleAddExpense = () => {
+    const handleAddExpense = async () => {
         if (!validateForm()) return;
 
-        const newExpense = {
-            id: Date.now().toString(),
+        const payload = {
             description: formData.description.trim(),
             amount: parseFloat(formData.amount),
-            date: new Date().toISOString().split('T')[0],
+            date: formData.date,
             is_recurring: formData.type === 'recurring',
             frequency: formData.type === 'recurring' ? formData.frequency : undefined,
         };
 
-        dispatch(addExpense(newExpense));
-        resetForm();
+        try {
+            await dispatch(createExpense(payload)).unwrap();
+            resetForm();
+        } catch (error) {
+            console.error('Failed to create expense:', error);
+            alert('Failed to add expense. Please try again.');
+        }
     };
 
     return (
@@ -90,6 +101,15 @@ export const QuickAddExpense: React.FC = () => {
                         step="0.01"
                         min="0"
                         value={formData.amount}
+                        onChange={handleInputChange}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <Label>Date</Label>
+                    <Input
+                        type="date"
+                        name="date"
+                        value={formData.date}
                         onChange={handleInputChange}
                     />
                 </FormGroup>

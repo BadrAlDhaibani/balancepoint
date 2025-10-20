@@ -56,7 +56,7 @@ export const addIncome = async (req: AuthRequest, res: Response) => {
         userId,
         description,
         amount,
-        new Date(date),
+        date, // Pass date string directly to avoid timezone conversion
         is_recurring,
         frequency
     );

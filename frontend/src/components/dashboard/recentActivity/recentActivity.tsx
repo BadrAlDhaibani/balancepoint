@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import { formatDateLabel } from '../../../utils/dateFormatter';
 import {
     Card,
     SectionTitle,
@@ -69,29 +70,6 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
         return `${prefix}$${Math.abs(amount).toFixed(2)}`;
     };
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-
-        today.setHours(0, 0, 0, 0);
-        yesterday.setHours(0, 0, 0, 0);
-        const compareDate = new Date(date);
-        compareDate.setHours(0, 0, 0, 0);
-
-        if (compareDate.getTime() === today.getTime()) {
-            return 'Today';
-        } else if (compareDate.getTime() === yesterday.getTime()) {
-            return 'Yesterday';
-        } else {
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            });
-        }
-    };
-
     const getTransactionTypeLabel = (is_recurring: boolean) => {
         return is_recurring ? 'Auto' : 'Manual';
     };
@@ -112,7 +90,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                         <ActivityDetails>
                             <ActivityTitle>{transaction.description}</ActivityTitle>
                             <ActivityMeta>
-                                {formatDate(transaction.date)} • {getTransactionTypeLabel(transaction.is_recurring)}
+                                {formatDateLabel(transaction.date)} • {getTransactionTypeLabel(transaction.is_recurring)}
                                 <ActivityType type={transaction.type} isRecurring={transaction.is_recurring}>
                                     {getTransactionTypeLabel(transaction.is_recurring)}
                                 </ActivityType>

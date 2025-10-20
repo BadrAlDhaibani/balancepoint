@@ -86,15 +86,18 @@ const FinancialHealth: React.FC<FinancialHealthProps> = ({
             nextPayment: calculateNextPayment(income.date, income.frequency)
         }));
 
-        const nextIncome = upcomingIncomes.sort((a, b) => 
+        const nextIncome = upcomingIncomes.sort((a, b) =>
             a.nextPayment.getTime() - b.nextPayment.getTime()
         )[0];
 
-        nextIncomeDate = nextIncome.nextPayment.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric' 
+        nextIncomeDate = nextIncome.nextPayment.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
         });
-        nextIncomeAmount = nextIncome.amount;
+        // Ensure amount is a number
+        nextIncomeAmount = typeof nextIncome.amount === 'number'
+            ? nextIncome.amount
+            : parseFloat(nextIncome.amount) || 0;
         daysUntilNextIncome = Math.ceil(
             (nextIncome.nextPayment.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
         );

@@ -1,4 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../store';
+import { fetchAllIncome } from '../../store/slices/incomeSlice';
+import { fetchAllExpenses } from '../../store/slices/expenseSlice';
 import { MainContent } from './DashboardStyled';
 import { FinancialHealth } from './financialHealth';
 import { SmartInsights } from './smartInsights';
@@ -6,6 +10,14 @@ import { UpcomingEvents } from './upcomingEvents';
 import { RecentActivity } from './recentActivity';
 
 const Dashboard: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    // Fetch both income and expense data on dashboard mount
+    dispatch(fetchAllIncome());
+    dispatch(fetchAllExpenses());
+  }, [dispatch]);
+
   const handleViewAllTransactions = () => {
     console.log('View all transactions clicked');
   };

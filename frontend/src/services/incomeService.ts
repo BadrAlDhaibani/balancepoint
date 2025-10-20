@@ -1,33 +1,32 @@
 import api from './api';
-import { Income } from '../store/slices/incomeSlice';
+import { Income, CreateIncomePayload } from '../store/slices/incomeSlice';
 
 export const incomeService = {
-    async getAll() {
+    async getAll(): Promise<Income[]> {
         const response = await api.get('/income');
         return response.data.data;
     },
 
-    async create(income: Omit<Income, 'id'>) {
+    async create(income: CreateIncomePayload): Promise<Income> {
         const response = await api.post('/income', income);
         return response.data.data;
     },
 
-    async update(id: string, income: Partial<Income>) {
+    async update(id: string, income: Partial<CreateIncomePayload>): Promise<Income> {
         const response = await api.put(`/income/${id}`, income);
         return response.data.data;
     },
 
-    async delete(id: string) {
-        const response = await api.delete(`/income/${id}`);
-        return response.data;
+    async delete(id: string): Promise<void> {
+        await api.delete(`/income/${id}`);
     },
 
-    async getRecurring() {
+    async getRecurring(): Promise<Income[]> {
         const response = await api.get('/income/recurring');
         return response.data.data;
     },
 
-    async getOneTime() {
+    async getOneTime(): Promise<Income[]> {
         const response = await api.get('/income/one-time');
         return response.data.data;
     }

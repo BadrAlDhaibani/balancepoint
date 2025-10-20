@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addIncome } from '../../../store/slices/incomeSlice';
+import { AppDispatch } from '../../../store';
+import { createIncome } from '../../../store/slices/incomeSlice';
 import {
     QuickAddSection,
     QuickAddTitle,
@@ -13,11 +14,16 @@ import {
     Button,
 }from './quickAddIncomeStyled';
 
+const getTodayDate = () => {
+    return new Date().toISOString().split('T')[0];
+};
+
 export const QuickAddIncome: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const [formData, setFormData] = useState({
         description: '',
         amount: '',
+        date: getTodayDate(),
         type: 'one-time' as 'one-time' | 'recurring',
         frequency: 'monthly' as 'monthly' | 'weekly' | 'bi-weekly' | 'quarterly',
     });
@@ -34,6 +40,7 @@ export const QuickAddIncome: React.FC = () => {
         setFormData({
             description: '',
             amount: '',
+            date: getTodayDate(),
             type: 'one-time',
             frequency: 'monthly',
         });
@@ -51,20 +58,24 @@ export const QuickAddIncome: React.FC = () => {
         return true;
     };
 
-    const handleAddIncome = () => {
+    const handleAddIncome = async () => {
         if (!validateForm()) return;
 
-        const newIncome = {
-            id: Date.now().toString(),
+        const payload = {
             description: formData.description.trim(),
             amount: parseFloat(formData.amount),
-            date: new Date().toISOString().split('T')[0],
+            date: formData.date,
             is_recurring: formData.type === 'recurring',
             frequency: formData.type === 'recurring' ? formData.frequency : undefined,
         };
 
-        dispatch(addIncome(newIncome));
-        resetForm();
+        try {
+            await dispatch(createIncome(payload)).unwrap();
+            resetForm();
+        } catch (error) {
+            console.error('Failed to create income:', error);
+            alert('Failed to add income. Please try again.');
+        }
     };
 
     return (
@@ -90,6 +101,15 @@ export const QuickAddIncome: React.FC = () => {
                         step="0.01"
                         min="0"
                         value={formData.amount}
+                        onChange={handleInputChange}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <Label>Date</Label>
+                    <Input
+                        type="date"
+                        name="date"
+                        value={formData.date}
                         onChange={handleInputChange}
                     />
                 </FormGroup>

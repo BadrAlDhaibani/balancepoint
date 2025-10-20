@@ -6,7 +6,7 @@ export const createExpense = async (
     userId: string,
     description: string,
     amount: number,
-    date: Date,
+    date: string | Date,
     isRecurring: boolean,
     frequency?: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly'
 ): Promise<Expense> => {
@@ -70,7 +70,7 @@ export const updateExpense = async (
     updates: {
         description?: string;
         amount?: number;
-        date?: Date;
+        date?: string | Date;
         is_recurring?: boolean;
         frequency?: 'weekly' | 'bi-weekly' | 'monthly' | 'quarterly' | null;
     }

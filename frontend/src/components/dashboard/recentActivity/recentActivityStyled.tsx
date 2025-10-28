@@ -17,6 +17,12 @@ export const SectionTitle = styled.h2`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: ${props => props.theme.spacing.sm};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes.lg};
+        flex-wrap: wrap;
+    }
 
     button {
         background: none;
@@ -28,9 +34,15 @@ export const SectionTitle = styled.h2`
         padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
         border-radius: ${props => props.theme.borderRadius.sm};
         transition: all ${props => props.theme.transitions.fast};
+        white-space: nowrap;
 
         &:hover {
             font-weight: 600;
+        }
+
+        ${props => props.theme.mediaQueries.mobile} {
+            font-size: ${props => props.theme.fontSizes.sm};
+            padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.xs};
         }
     }
 `;
@@ -47,6 +59,13 @@ export const ActivityItem = styled.div`
     padding: ${props => props.theme.spacing.sm} 0;
     border-bottom: 1px solid ${props => props.theme.colors.background.gray};
     transition: all ${props => props.theme.transitions.fast};
+    gap: ${props => props.theme.spacing.sm};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        padding: ${props => props.theme.spacing.sm} 0;
+    }
 
     &:hover {
         background-color: ${props => props.theme.colors.background.card};
@@ -62,17 +81,31 @@ export const ActivityDetails = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
+    min-width: 0;
+
+    ${props => props.theme.mediaQueries.mobile} {
+        width: 100%;
+    }
 `;
 
 export const ActivityTitle = styled.div`
     font-weight: 400;
     color: ${props => props.theme.colors.text.primary};
     font-size: ${props => props.theme.fontSizes.base};
+    word-break: break-word;
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes.sm};
+    }
 `;
 
 export const ActivityMeta = styled.div`
     font-size: ${props => props.theme.fontSizes.base};
     color: ${props => props.theme.colors.text.secondary};
+
+    ${props => props.theme.mediaQueries.mobile} {
+        font-size: ${props => props.theme.fontSizes.xs};
+    }
 `;
 
 export const ActivityAmount = styled.div<{ $type: 'income' | 'expense' }>`
@@ -86,10 +119,14 @@ export const ActivityAmount = styled.div<{ $type: 'income' | 'expense' }>`
         ? props.theme.colors.status.income
         : props.theme.colors.status.expense};
     text-align: right;
+    white-space: nowrap;
 
-    @media (max-width: 768px) {
+    ${props => props.theme.mediaQueries.mobile} {
         width: 100%;
         justify-content: space-between;
+        align-items: flex-end;
+        font-size: ${props => props.theme.fontSizes.sm};
+        margin-top: ${props => props.theme.spacing.xs};
     }
 `;
 

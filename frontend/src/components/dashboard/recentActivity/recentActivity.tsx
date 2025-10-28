@@ -10,6 +10,7 @@ import {
     ActivityDetails,
     ActivityTitle,
     ActivityMeta,
+    ActivityAmountContainer,
     ActivityAmount,
     ActivityType,
     EmptyState,
@@ -80,12 +81,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({
                                 {formatDateLabel(transaction.date)} • {transaction.is_recurring ? 'Automatic' : 'Manual Entry'}
                             </ActivityMeta>
                         </ActivityDetails>
-                        <ActivityAmount $type={transaction.type}>
-                            {formatAmount(transaction.amount, transaction.type)}
+                        <ActivityAmountContainer>
+                            <ActivityAmount $type={transaction.type}>
+                                {formatAmount(transaction.amount, transaction.type)}
+                            </ActivityAmount>
                             <ActivityType $type={transaction.type} $isRecurring={transaction.is_recurring}>
                                 {getTransactionTypeLabel(transaction.is_recurring).toUpperCase()}
                             </ActivityType>
-                        </ActivityAmount>
+                        </ActivityAmountContainer>
                     </ActivityItem>
                 ))
             ) : (
